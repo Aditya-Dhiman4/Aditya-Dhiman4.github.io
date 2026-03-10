@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aditya Dhiman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070707;--bg-card:#0D0D0D;--bg-raised:#131313;--border:#1C1C1C;--border-hi:#2A2A2A;--grn:#22C97A;--grn-dim:#0F6B3E;--grn-glow:#22C97A33;--text:#E8E8E8;--text-mid:#A0A0A0;--text-dim:#505050;--font-mono:JetBrains Mono,monospace;--font-disp:Barlow Condensed,sans-serif;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:14px;line-height:1.7;overflow-x:hidden;cursor:crosshair;}
+::selection{background:var(--grn);color:#000;}
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);pointer-events:none;z-index:9999;}
+#boot{position:fixed;inset:0;background:var(--bg);z-index:9000;display:flex;align-items:center;justify-content:center;padding:40px;transition:opacity .6s ease;}
+#boot.fade-out{opacity:0;pointer-events:none;}
+#boot-terminal{width:100%;max-width:680px;}
+.boot-line{font-family:var(--font-mono);font-size:12px;line-height:1.9;opacity:0;}
+.boot-line.c-grn{color:var(--grn);}.boot-line.c-dim{color:var(--text-dim);}.boot-line.c-wht{color:var(--text);}.boot-line.c-amb{color:#E8970A;}
+.boot-line.show{opacity:1;}
+#boot-cursor{display:inline-block;width:8px;height:14px;background:var(--grn);animation:blink .8s step-end infinite;vertical-align:middle;margin-left:2px;}
+@keyframes blink{50%{opacity:0;}}
+#main{opacity:0;transition:opacity .8s ease;}
+#main.visible{opacity:1;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:54px;border-bottom:1px solid var(--border);background:rgba(7,7,7,.94);backdrop-filter:blur(12px);}
+.nav-id{font-family:var(--font-mono);font-size:11px;color:var(--grn);letter-spacing:.12em;text-transform:uppercase;}
+.nav-id span{color:var(--text-dim);}
+nav ul{list-style:none;display:flex;gap:36px;}
+nav ul li a{font-family:var(--font-mono);font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+nav ul li a:hover{color:var(--grn);}
+.trace-container{width:100%;overflow:hidden;height:40px;}
+.trace-container svg{width:200%;height:100%;animation:scroll-trace 6s linear infinite;}
+@keyframes scroll-trace{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+#hero{min-height:70vh;padding:110px 48px 70px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+#hero::after{content:"";position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,var(--grn-glow) 0%,transparent 70%);pointer-events:none;}
+.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--grn);box-shadow:0 0 6px var(--grn);animation:pulse-dot 2s ease-in-out infinite;margin-right:6px;}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero-tag{font-family:var(--font-mono);font-size:11px;color:var(--grn);letter-spacing:.2em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+.hero-tag::before{content:"";display:inline-block;width:24px;height:1px;background:var(--grn);}
+h1{font-family:var(--font-disp);font-size:clamp(64px,8vw,108px);font-weight:800;line-height:.9;letter-spacing:-.02em;color:var(--text);margin-bottom:28px;}
+h1 .accent{color:var(--grn);}
+.hero-sub{font-family:var(--font-mono);font-size:13.5px;color:var(--text-mid);line-height:1.9;max-width:580px;margin-bottom:40px;}
+.hero-sub strong{color:var(--text);font-weight:500;}
+.hero-links{display:flex;gap:16px;flex-wrap:wrap;}
+.btn{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:11px 22px;text-decoration:none;border:1px solid;transition:all .2s;cursor:crosshair;}
+.btn-primary{background:var(--grn);color:#000;border-color:var(--grn);font-weight:700;}
+.btn-primary:hover{background:transparent;color:var(--grn);}
+.btn-ghost{background:transparent;color:var(--text-mid);border-color:var(--border-hi);}
+.btn-ghost:hover{border-color:var(--grn);color:var(--grn);}
+section{padding:88px 48px;border-bottom:1px solid var(--border);}
+.section-header{display:flex;align-items:baseline;gap:20px;margin-bottom:56px;}
+.section-num{font-family:var(--font-mono);font-size:11px;color:var(--grn);}
+h2{font-family:var(--font-disp);font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-.02em;color:var(--text);line-height:1;}
+.section-rule{flex:1;height:1px;background:var(--border);margin-left:10px;align-self:center;}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);}
+.exp-card{background:var(--bg-card);padding:40px;position:relative;overflow:hidden;transition:background .2s;}
+.exp-card:hover{background:var(--bg-raised);}
+.exp-card::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--grn);opacity:0;transition:opacity .2s;}
+.exp-card:hover::before{opacity:1;}
+.exp-role{font-family:var(--font-disp);font-size:28px;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:6px;}
+.exp-company{font-family:var(--font-mono);font-size:11px;color:var(--grn);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.exp-period{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;margin-bottom:28px;}
+.exp-bullets{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.exp-bullets li{font-family:var(--font-mono);font-size:12.5px;color:var(--text-mid);line-height:1.75;padding-left:18px;position:relative;}
+.exp-bullets li::before{content:"▸";position:absolute;left:0;color:var(--grn-dim);font-size:9px;top:4px;}
+.exp-bullets li strong{color:var(--text);font-weight:500;}
+.exp-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px;}
+.exp-img1{width:100%;height:200px;object-fit:cover;object-position:center 70%;margin-bottom:28px;filter:saturate(0.8) brightness(0.9);border:1px solid var(--border);transition:filter .3s;}
+.exp-img2{width:100%;height:200px;object-fit:cover;object-position:center 50%;margin-bottom:28px;filter:saturate(0.8) brightness(0.9);border:1px solid var(--border);transition:filter .3s;}
+.exp-card:hover .exp-img1,.exp-card:hover .exp-img2{filter:saturate(1) brightness(1);}
+.tag{font-family:var(--font-mono);font-size:10.5px;padding:4px 9px;border:1px solid var(--border-hi);color:var(--text-dim);letter-spacing:.05em;}
+.tag.hi{border-color:var(--grn-dim);color:var(--grn);background:rgba(34,201,122,.06);}
+.tag.primary{border-color:var(--grn);color:var(--grn);background:rgba(34,201,122,.12);font-weight:700;}
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.proj-card{background:var(--bg-card);padding:36px;position:relative;overflow:hidden;transition:background .2s;display:flex;flex-direction:column;}
+.proj-card:hover{background:var(--bg-raised);}
+.proj-card::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--grn),transparent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.proj-card:hover::after{transform:scaleX(1);}
+.proj-num{font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-bottom:16px;}
+.proj-name{font-family:var(--font-disp);font-size:24px;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:14px;}
+.proj-desc{font-family:var(--font-mono);font-size:12.5px;color:var(--text-mid);line-height:1.8;flex:1;margin-bottom:22px;}
+.proj-desc strong{color:var(--text);font-weight:500;}
+.proj-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:10.5px;color:var(--grn);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:gap .2s;}
+.proj-link:hover{gap:12px;}
+.proj-link::after{content:"→";}
+.skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.skill-group{background:var(--bg-card);padding:32px 28px;}
+.skill-group-label{font-family:var(--font-mono);font-size:10px;color:var(--grn);letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.skill-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.skill-list li{font-family:var(--font-mono);font-size:12.5px;color:var(--text-mid);display:flex;align-items:center;gap:10px;}
+.skill-list li::before{content:"";display:inline-block;width:4px;height:4px;background:var(--border-hi);flex-shrink:0;}
+.skill-list li.primary{color:var(--text);}
+.skill-list li.primary::before{background:var(--grn);}
+#contact{border-bottom:none;padding-bottom:120px;}
+.contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.contact-sub{font-family:var(--font-mono);font-size:13px;color:var(--text-mid);line-height:1.9;}
+.contact-right{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);}
+.contact-link{background:var(--bg-card);padding:22px 28px;display:flex;justify-content:space-between;align-items:center;text-decoration:none;transition:background .2s;cursor:crosshair;}
+.contact-link:hover{background:var(--bg-raised);}
+.contact-link-label{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px;}
+.contact-link-val{font-family:var(--font-mono);font-size:13.5px;color:var(--text);}
+.contact-link-arrow{font-size:16px;color:var(--grn);opacity:0;transition:opacity .2s,transform .2s;transform:translateX(-6px);}
+.contact-link:hover .contact-link-arrow{opacity:1;transform:translateX(0);}
+footer{padding:22px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);}
+footer p{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;}
+footer span{color:var(--grn);}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+@media(max-width:900px){nav{padding:0 20px;}nav ul{gap:16px;}#hero{padding:100px 20px 60px;}section{padding:60px 20px;}.exp-grid,.proj-grid{grid-template-columns:1fr;}.skills-grid{grid-template-columns:1fr 1fr;}.contact-inner{grid-template-columns:1fr;gap:40px;}footer{flex-direction:column;gap:8px;text-align:center;}}
+</style>
+</head>
+<body>
+<div id="boot">
+  <div id="boot-terminal">
+    <div class="boot-line c-dim">PORTFOLIO INIT SEQUENCE v0.1</div>
+    <div class="boot-line c-dim">--------------------------------------------</div>
+    <div class="boot-line c-dim">&nbsp;</div>
+    <div class="boot-line c-grn">[ OK ] Loading kernel modules...</div>
+    <div class="boot-line c-grn">[ OK ] Mounting firmware partitions...</div>
+    <div class="boot-line c-grn">[ OK ] eFuse driver OK</div>
+    <div class="boot-line c-grn">[ OK ] CAN-FD bus initialized</div>
+    <div class="boot-line c-grn">[ OK ] Ethernet switch daemon started</div>
+    <div class="boot-line c-grn">[ OK ] Yocto image verified</div>
+    <div class="boot-line c-grn">[ OK ] FreeRTOS scheduler running</div>
+    <div class="boot-line c-grn">[ OK ] IMU calibration complete - sigma = 0.002 rad/s</div>
+    <div class="boot-line c-grn">[ OK ] Body velocity EKF online</div>
+    <div class="boot-line c-grn">[ OK ] Torque vectoring active</div>
+    <div class="boot-line c-grn">[ OK ] ROS2 nodes running</div>
+    <div class="boot-line c-dim">&nbsp;</div>
+    <div class="boot-line c-wht">IDENTITY  -&gt;  ADITYA DHIMAN</div>
+    <div class="boot-line c-wht">ROLE      -&gt;  EMBEDDED SYSTEMS ENGINEER</div>
+    <div class="boot-line c-wht">STACK     -&gt;  C / C++ / FreeRTOS / STM32 / Linux</div>
+    <div class="boot-line c-wht">STATUS    -&gt;  AVAILABLE - SUMMER / FALL 2026</div>
+    <div class="boot-line c-dim">&nbsp;</div>
+    <div class="boot-line c-grn">MOUNTING PORTFOLIO... <span id="boot-cursor"></span></div>
+  </div>
+</div>
+<div id="main">
+  <nav>
+    <div class="nav-id">AD<span>/</span>FIRMWARE</div>
+    <ul>
+      <li><a href="#experience">EXP</a></li>
+      <li><a href="#projects">PROJ</a></li>
+      <li><a href="#skills">STACK</a></li>
+      <li><a href="#contact">CONTACT</a></li>
+    </ul>
+  </nav>
+  <section id="hero">
+    <div class="hero-tag"><span class="status-dot"></span>Embedded Systems &middot; Vehicle Controls &middot; Real-time Firmware</div>
+    <h1>ADITYA<br><span class="accent">DHIMAN</span></h1>
+    <p class="hero-sub">Computer Engineering student at UBC with hands-on experience in <strong>embedded firmware, automotive software</strong>, and real-time control systems at UBC Formula Electric and production ECU development at Rivian.</p>
+    <div class="hero-links">
+      <a href="#experience" class="btn btn-primary">View Experience</a>
+      <a href="https://github.com/Aditya-Dhiman4" target="_blank" class="btn btn-ghost">GitHub &#8599;</a>
+      <a href="#contact" class="btn btn-ghost">Contact &#8599;</a>
+      <a href="Aditya_Dhiman_Resume.pdf" target="_blank" download="Aditya_Dhiman_Resume.pdf" class="btn btn-ghost">Resume &#8599;</a>
+    </div>
+  </section>
+  <div class="trace-container" aria-hidden="true">
+    <svg viewBox="0 0 1200 40" preserveAspectRatio="none" fill="none">
+      <polyline points="0,20 60,20 70,5 80,35 90,20 200,20 210,5 220,35 230,5 240,35 250,20 360,20 370,8 385,32 400,20 500,20 510,5 520,35 530,20 640,20 650,8 660,32 680,8 700,20 800,20 810,5 820,35 830,20 940,20 950,5 960,35 970,5 980,35 990,20 1100,20 1110,8 1120,32 1140,8 1160,20 1200,20" stroke="#22C97A" stroke-width="1.2" opacity="0.35"/>
+    </svg>
+  </div>
+  <section id="experience">
+    <div class="section-header reveal"><span class="section-num">01 //</span><h2>EXPERIENCE</h2><div class="section-rule"></div></div>
+    <div class="exp-grid">
+      <div class="exp-card reveal">
+        <img src="rivianr1t.png" alt="Rivian R1T" class="exp-img1">
+        <div class="exp-company">Rivian &times; Volkswagen Group Technologies</div>
+        <div class="exp-role">Embedded Software<br>Engineer Intern</div>
+        <div class="exp-period">SEPT 2025 &mdash; PRESENT // Vancouver, BC</div>
+        <ul class="exp-bullets">
+          <li>Ported an <strong>Ethernet switch manager</strong> for next-gen ECUs, managing data registers (link status, temperature/heartbeat) and OBD communication over RMU for vehicle diagnostics</li>
+          <li>Architected a <strong>multithreaded gRPC server in C++</strong> streaming live Ethernet switch diagnostics to OBD-II clients with bidirectional protobuf comms</li>
+          <li>Built a <strong>GPT partitioning tool</strong> for embedded Linux images, replacing a flaky legacy flash flow adopted by 200+ developers</li>
+          <li>Designed a <strong>crash-resilient logging framework</strong> with persistent UFS storage and cloud upload post power-cycle &mdash; used across infotainment, connectivity, and diagnostics teams</li>
+          <li>Maintaining <strong>Yocto/BitBake embedded Linux builds</strong> for current and next-gen Infotainment ECUs</li>
+        </ul>
+        <div class="exp-tags">
+          <span class="tag hi">Embedded Linux</span>
+          <span class="tag hi">Yocto/BitBake</span>
+          <span class="tag hi">C++</span>
+          <span class="tag hi">gRPC</span>
+          <span class="tag">Protobuf</span>
+          <span class="tag">OBD-II</span>
+        </div>
+      </div>
+      <div class="exp-card reveal">
+        <img src="car.png" alt="UBC Formula Electric car #218 at competition" class="exp-img2">
+        <div class="exp-company">UBC Formula Electric &mdash; FSAE</div>
+        <div class="exp-role">Vehicle Controls<br>Firmware Developer</div>
+        <div class="exp-period">SEPT 2024 &mdash; PRESENT // Vancouver, BC</div>
+        <ul class="exp-bullets">
+          <li>Real-time firmware on <strong>custom STM32F4/H7 boards</strong> &mdash; FreeRTOS tasks, CAN-FD, SPI, I2C, UART, ADC/GPIO with GoogleTest unit coverage</li>
+          <li>Designed a <strong>hardware-agnostic eFuse driver</strong> with sense-line fault handling using asynchronous ADC acquisition via DMA for current sensing and retry logic</li>
+          <li><strong>CORDIC accelerator driver</strong> cutting trig CPU cycles 3&times; &mdash; directly reducing torque vectoring loop latency</li>
+          <li><strong>IMU driver over SPI</strong> for low-noise, high-rate accel/gyro acquisition feeding vehicle dynamics</li>
+          <li><strong>Yaw Rate Controller</strong> (PID + load-transfer torque allocation) &mdash; simulated in Simulink, deployed in C, validated on car</li>
+          <li>Built an <strong>Extended Kalman Filter</strong> fusing IMU, wheel speed, GPS, and slip detection for sub-10 km/h velocity estimation</li>
+        </ul>
+        <div class="exp-tags"><span class="tag hi">STM32</span><span class="tag hi">FreeRTOS</span><span class="tag hi">CAN-FD</span><span class="tag">EKF</span><span class="tag hi">SPI/I2C</span><span class="tag">Simulink</span><span class="tag">GoogleTest</span></div>
+        <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="proj-link" style="margin-top:24px;">View Repository</a>
+      </div>
+    </div>
+  </section>
+  <section id="projects">
+    <div class="section-header reveal"><span class="section-num">02 //</span><h2>PROJECTS</h2><div class="section-rule"></div></div>
+    <div class="proj-grid">
+      <div class="proj-card reveal">
+        <div class="proj-num">// 001</div>
+        <div class="proj-name">Body Velocity<br>EKF</div>
+        <div class="proj-desc">Implemented low-speed body velocity estimation below 10 km/h &mdash; a hard problem where wheel speed sensors lose accuracy due to tire slip. Fuses <strong>IMU, wheel speed, and GPS</strong> with slip ratio gating and chi-squared innovation gating to reject corrupted measurements.<br><br>Built on a team-developed EKF library with nonlinear Jacobian derivation for the measurement model. Deployed alongside the Yaw Rate Controller in C on STM32.</div>
+        <div class="exp-tags" style="margin-bottom:22px"><span class="tag hi">C++</span><span class="tag hi">MATLAB</span><span class="tag">STM32</span><span class="tag">State Estimation</span></div>
+        <a href="https://github.com/Aditya-Dhiman4" target="_blank" class="proj-link">View on GitHub</a>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-num">// 002</div>
+        <div class="proj-name">eFuse<br>Driver</div>
+        <div class="proj-desc">Designed a shared, <strong>hardware-agnostic eFuse driver</strong> in C for the Formula Electric car &mdash; sense-line based fault detection using asynchronous ADC acquisition via DMA for current sensing, with retry logic and state fault handling.<br><br>Improved reliability of vehicle start-up sequences and power state transitions across multiple boards without any hardware-specific coupling.</div>
+        <div class="exp-tags" style="margin-bottom:22px"><span class="tag hi">C</span><span class="tag hi">STM32</span><span class="tag hi">FreeRTOS</span><span class="tag">ADC/DMA</span><span class="tag">Fault Handling</span></div>
+        <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="proj-link">View on GitHub</a>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-num">// 003</div>
+        <div class="proj-name">F1Tenth<br>Autonomous Car</div>
+        <div class="proj-desc">Trained a <strong>PPO reinforcement learning policy</strong> for 10M+ timesteps and deployed it to a physical F1Tenth robot via ROS2 &mdash; cutting lap time by 50% with zero collisions across 30+ runs.<br><br>Enhanced simulator with multi-agent support, vehicle dynamics modeling, and improved LiDAR sim to close the sim-to-real gap. Deployed a <strong>CNN-based localizer</strong> achieving 99% accuracy on 5000+ labeled frames.</div>
+        <div class="exp-tags" style="margin-bottom:22px"><span class="tag hi">Python</span><span class="tag hi">ROS2</span><span class="tag">C++</span><span class="tag">PyTorch</span><span class="tag">RL</span><span class="tag">CNN</span></div>
+      </div>
+    </div>
+  </section>
+  <section id="skills">
+    <div class="section-header reveal"><span class="section-num">03 //</span><h2>STACK</h2><div class="section-rule"></div></div>
+    <div class="skills-grid reveal">
+      <div class="skill-group"><div class="skill-group-label">Languages</div><ul class="skill-list"><li class="primary">C</li><li class="primary">C++</li><li class="primary">Python</li><li>ARM Assembly</li><li>Verilog</li></ul></div>
+      <div class="skill-group"><div class="skill-group-label">RTOS / MCU</div><ul class="skill-list"><li class="primary">FreeRTOS</li><li class="primary">STM32 F4/H7</li><li class="primary">ESP32</li><li>Yocto / BitBake</li><li>JTAG / Debug</li></ul></div>
+      <div class="skill-group"><div class="skill-group-label">Peripherals / Bus</div><ul class="skill-list"><li class="primary">CAN-FD</li><li class="primary">SPI / I2C / UART</li><li class="primary">ADC / GPIO / DMA</li><li>Ethernet</li><li>PWM</li></ul></div>
+      <div class="skill-group"><div class="skill-group-label">Tools / Infra</div><ul class="skill-list"><li class="primary">Linux</li><li class="primary">MATLAB / Simulink</li><li class="primary">ROS2</li><li>gRPC / Protobuf</li><li>Vector CANoe</li><li>Altium / CMake / Bazel</li></ul></div>
+    </div>
+  </section>
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="contact-left reveal"><h2 style="font-family:var(--font-disp);font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-0.02em;margin-bottom:16px;">CONTACT ME</h2><p class="contact-sub">Currently pursuing Computer Engineering at UBC (May 2027).<br>Available for internships Summer / Fall 2026.</p></div>
+      <div class="contact-right reveal">
+        <a class="contact-link" id="email-link" href="#"><div><div class="contact-link-label">Email</div><div class="contact-link-val" id="email-val">loading...</div></div><div class="contact-link-arrow">&#8594;</div></a>
+        <a href="https://github.com/Aditya-Dhiman4" target="_blank" class="contact-link"><div><div class="contact-link-label">GitHub</div><div class="contact-link-val">github.com/Aditya-Dhiman4</div></div><div class="contact-link-arrow">&#8594;</div></a>
+        <a href="https://www.linkedin.com/in/adityadhiman18/" target="_blank" class="contact-link"><div><div class="contact-link-label">LinkedIn</div><div class="contact-link-val">linkedin.com/in/adityadhiman18</div></div><div class="contact-link-arrow">&#8594;</div></a>
+        <a href="tel:+17783024429" class="contact-link"><div><div class="contact-link-label">Phone</div><div class="contact-link-val">778-302-4429</div></div><div class="contact-link-arrow">&#8594;</div></a>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <p>ADITYA DHIMAN // EMBEDDED SYSTEMS // UBC <span>2027</span></p>
+  </footer>
+</div>
+<script>
+(function(){var u="aditya16dhiman",d="gmail.com",a=u+"@"+d;document.getElementById("email-link").href="mailto:"+a;document.getElementById("email-val").textContent=a;})();
+var L=document.querySelectorAll(".boot-line"),B=document.getElementById("boot"),M=document.getElementById("main"),i=0;
+function next(){if(i<L.length){L[i].classList.add("show");i++;var d=i<3?60:i<8?120:i===8?300:i<12?160:200;setTimeout(next,d);}else{setTimeout(function(){B.classList.add("fade-out");M.classList.add("visible");setTimeout(function(){B.style.display="none";},700);},800);}}
+setTimeout(next,300);
+var R=document.querySelectorAll(".reveal");
+var O=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add("visible");O.unobserve(x.target);}});},{threshold:0.1,rootMargin:"0px 0px -40px 0px"});
+R.forEach(function(r){O.observe(r);});
+</script>
+</body>
+</html>
