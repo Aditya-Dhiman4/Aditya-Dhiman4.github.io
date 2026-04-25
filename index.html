@@ -344,10 +344,10 @@ footer span { color: var(--grn); }
   <div class="nav-id">AD<span>/</span>FIRMWARE</div>
   <ul>
     <li><a href="#results">RESULTS</a></li>
-    <li><a href="#projects">PROJECTS</a></li>
-    <li><a href="#morework">MORE WORK</a></li>
     <li><a href="#experience">EXP</a></li>
-    <li><a href="#capabilities">STACK</a></li>
+    <li><a href="#projects">FEATURED WORK</a></li>
+    <li><a href="#capabilities">CAPABILITIES</a></li>
+    <li><a href="#morework">MORE WORK</a></li>
     <li><a href="#contact">CONTACT</a></li>
   </ul>
 </nav>
@@ -368,7 +368,7 @@ footer span { color: var(--grn); }
         <p class="hero-cmd"><span class="prompt">$</span> ./portfolio --focus embedded-systems</p>
         <div class="hero-tag"><span class="status-dot"></span>Embedded Systems &middot; Vehicle Controls &middot; Real-time Firmware</div>
         <h1>ADITYA<br><span class="accent">DHIMAN</span></h1>
-        <p class="hero-sub">I build <strong>embedded firmware and automotive software</strong> &mdash; currently at RV Tech on next-gen infotainment ECUs, and on the vehicle controls team at UBC Formula Electric.</p>
+        <p class="hero-sub">I build <strong>embedded systems</strong> — from <strong>Linux-based</strong> production tooling to <strong>RTOS firmware</strong> and real-time <strong>vehicle controls</strong>.</p>
         <div class="hero-links">
           <a href="#projects" class="btn btn-primary">View My Work</a>
           <a href="https://www.linkedin.com/in/adityadhiman18/" target="_blank" class="btn btn-ghost">LinkedIn &#8599;</a>
@@ -417,7 +417,7 @@ footer span { color: var(--grn); }
 
 <!-- 01 RESULTS -->
 <section id="results">
-  <div class="section-header reveal"><span class="section-num">01 //</span><h2>RESULTS</h2><div class="section-rule"></div></div>
+  <div class="section-header reveal"><span class="section-num">01 //</span><h2>IMPACT</h2><div class="section-rule"></div></div>
   <p class="section-copy reveal">Representative outcomes across production embedded systems, Formula Electric firmware, and autonomy work.</p>
   <div class="results-grid">
     <div class="card result-card reveal">
@@ -438,9 +438,50 @@ footer span { color: var(--grn); }
   </div>
 </section>
 
-<!-- 02 PROJECTS -->
+<!-- 02 EXPERIENCE -->
+<section id="experience">
+  <div class="section-header reveal"><span class="section-num">02 //</span><h2>EXPERIENCE</h2><div class="section-rule"></div></div>
+  <div class="exp-grid">
+
+    <div class="card exp-card reveal">
+      <img src="rivianr1t.png" alt="Rivian R1T" class="exp-img" style="object-position:center 70%">
+      <div class="exp-company">Rivian &times; Volkswagen Group Technologies</div>
+      <div class="exp-role">Embedded Software<br>Engineer Intern</div>
+      <div class="exp-period">SEPT 2025 &mdash; PRESENT // Vancouver, BC</div>
+      <p class="exp-summary">Production embedded systems work spanning Linux tooling, diagnostics, developer infrastructure, and resilient logging for next-generation ECUs.</p>
+      <ul class="bullet-list">
+        <li>Implemented an <strong>Ethernet switch manager</strong> for next-gen ECUs handling link status, thermal monitoring, and OBD diagnostics over RMU &mdash; shipped to production firmware</li>
+        <li>Architected a <strong>multithreaded gRPC server in C++</strong> streaming live Ethernet switch diagnostics with bidirectional protobuf comms</li>
+        <li>Built a <strong>GPT partitioning tool</strong> for embedded Linux images, replacing a flaky legacy flash flow now adopted by 200+ developers</li>
+        <li>Designed a <strong>crash-resilient logging framework</strong> with persistent UFS storage and cloud upload post power-cycle</li>
+        <li>Maintaining <strong>Yocto/BitBake embedded Linux builds</strong> for current and next-gen Infotainment ECUs</li>
+      </ul>
+      <div class="tag-row"><span class="tag hi">Embedded Linux</span><span class="tag hi">Yocto / BitBake</span><span class="tag hi">C++</span><span class="tag hi">gRPC</span><span class="tag">Protobuf</span><span class="tag">OBD-II</span></div>
+    </div>
+
+    <div class="card exp-card reveal">
+      <img src="car.png" alt="UBC Formula Electric car at competition" class="exp-img" style="object-position:center 50%">
+      <div class="exp-company">UBC Formula Electric &mdash; FSAE</div>
+      <div class="exp-role">Vehicle Controls<br>Firmware Developer</div>
+      <div class="exp-period">SEPT 2024 &mdash; PRESENT // Vancouver, BC</div>
+      <p class="exp-summary">Real-time firmware and controls development for a Formula SAE electric racecar using custom hardware and a shared embedded software stack.</p>
+      <ul class="bullet-list">
+        <li>Real-time firmware on <strong>custom STM32H5/H7 boards</strong> &mdash; FreeRTOS tasks, CAN-FD, SPI, I2C, UART, ADC/GPIO with GoogleTest coverage</li>
+        <li>Designed a <strong>hardware-agnostic eFuse driver</strong> with DMA-based current sensing, fault handling, and retry logic</li>
+        <li><strong>CORDIC accelerator driver</strong> cutting trig CPU cycles 3&times; &mdash; directly reducing torque vectoring loop latency</li>
+        <li><strong>Yaw Rate Controller</strong> (PID + load-transfer torque allocation) &mdash; modeled in Simulink, deployed in C, validated on car</li>
+        <li>Built an <strong>Extended Kalman Filter</strong> fusing IMU, wheel speed, GPS, and slip detection for sub-10 km/h velocity estimation</li>
+      </ul>
+      <div class="tag-row"><span class="tag hi">STM32H5/H7</span><span class="tag hi">FreeRTOS</span><span class="tag hi">CAN-FD</span><span class="tag">SPI / I2C</span><span class="tag">Simulink</span><span class="tag">GoogleTest</span></div>
+      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link" style="margin-top:12px">View Repository</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- 03 FEATURED ENGINEERING WORK -->
 <section id="projects">
-  <div class="section-header reveal"><span class="section-num">02 //</span><h2>PROJECTS</h2><div class="section-rule"></div></div>
+  <div class="section-header reveal"><span class="section-num">03 //</span><h2>FEATURED ENGINEERING WORK</h2><div class="section-rule"></div></div>
   <p class="section-copy reveal">Front-facing engineering work with enough depth to discuss design choices, tradeoffs, validation, and impact.</p>
   <div class="case-grid">
 
@@ -519,87 +560,9 @@ footer span { color: var(--grn); }
   </div>
 </section>
 
-<!-- 03 MORE WORK -->
-<section id="morework">
-  <div class="section-header reveal"><span class="section-num">03 //</span><h2>MORE WORK</h2><div class="section-rule"></div></div>
-  <p class="section-copy reveal">Additional projects across embedded firmware, autonomy, hardware design, and engineering tooling.</p>
-  <div class="work-grid">
-
-    <div class="card work-card reveal">
-      <div class="work-title">eFuse Driver Architecture</div>
-      <p class="work-desc">Shared, <strong>hardware-agnostic eFuse driver</strong> for Formula Electric custom boards &mdash; sense-line fault detection, async ADC acquisition via DMA for current sensing, retry logic, and power state management.</p>
-      <div class="tag-row"><span class="tag hi">C / C++</span><span class="tag hi">STM32</span><span class="tag">ADC / DMA</span><span class="tag">Fault Handling</span></div>
-      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
-    </div>
-
-    <div class="card work-card reveal">
-      <div class="work-title">CORDIC Accelerator Driver</div>
-      <p class="work-desc">Developed a <strong>CORDIC hardware driver</strong> on STM32H7, replacing software trig in the torque-vectoring firmware path. Required careful Q1.31 fixed-point handling and phase inversion debugging to achieve correct results.</p>
-      <div class="tag-row"><span class="tag hi">C</span><span class="tag hi">STM32H7</span><span class="tag">CORDIC</span><span class="tag">Fixed-Point</span></div>
-      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
-    </div>
-
-    <div class="card work-card reveal">
-      <div class="work-title">F1Tenth Autonomous Car</div>
-      <p class="work-desc">Trained a <strong>PPO RL policy</strong> for 10M+ timesteps and deployed to a physical F1Tenth robot via ROS2, cutting lap time 50% with zero collisions across 30+ runs. Deployed a <strong>CNN-based localizer</strong> at 99% accuracy on 5000+ labeled frames.</p>
-      <div class="tag-row"><span class="tag hi">Python</span><span class="tag hi">C++</span><span class="tag">ROS2</span><span class="tag">PyTorch</span><span class="tag">Reinforcement Learning</span></div>
-      <span class="text-private">&#128274; Private &mdash; demo available</span>
-    </div>
-
-    <div class="card work-card reveal">
-      <div class="work-title">16-bit ARM CPU on FPGA</div>
-      <p class="work-desc">Designed a <strong>16-bit ARM-inspired CPU</strong> from scratch in Verilog &mdash; full datapath including ALU, register file, control unit, and memory interface, synthesized and validated on FPGA hardware with a suite of assembly test programs.</p>
-      <div class="tag-row"><span class="tag hi">Verilog</span><span class="tag hi">FPGA</span><span class="tag">ARM Architecture</span><span class="tag">Digital Design</span></div>
-      <span class="text-private">&#128274; Private &mdash; demo available</span>
-    </div>
-
-  </div>
-</section>
-
-<!-- 04 EXPERIENCE -->
-<section id="experience">
-  <div class="section-header reveal"><span class="section-num">04 //</span><h2>EXPERIENCE</h2><div class="section-rule"></div></div>
-  <div class="exp-grid">
-
-    <div class="card exp-card reveal">
-      <img src="rivianr1t.png" alt="Rivian R1T" class="exp-img" style="object-position:center 70%">
-      <div class="exp-company">Rivian &times; Volkswagen Group Technologies</div>
-      <div class="exp-role">Embedded Software<br>Engineer Intern</div>
-      <div class="exp-period">SEPT 2025 &mdash; PRESENT // Vancouver, BC</div>
-      <p class="exp-summary">Production embedded systems work spanning Linux tooling, diagnostics, developer infrastructure, and resilient logging for next-generation ECUs.</p>
-      <ul class="bullet-list">
-        <li>Implemented an <strong>Ethernet switch manager</strong> for next-gen ECUs handling link status, thermal monitoring, and OBD diagnostics over RMU &mdash; shipped to production firmware</li>
-        <li>Architected a <strong>multithreaded gRPC server in C++</strong> streaming live Ethernet switch diagnostics with bidirectional protobuf comms</li>
-        <li>Built a <strong>GPT partitioning tool</strong> for embedded Linux images, replacing a flaky legacy flash flow now adopted by 200+ developers</li>
-        <li>Designed a <strong>crash-resilient logging framework</strong> with persistent UFS storage and cloud upload post power-cycle</li>
-        <li>Maintaining <strong>Yocto/BitBake embedded Linux builds</strong> for current and next-gen Infotainment ECUs</li>
-      </ul>
-      <div class="tag-row"><span class="tag hi">Embedded Linux</span><span class="tag hi">Yocto / BitBake</span><span class="tag hi">C++</span><span class="tag hi">gRPC</span><span class="tag">Protobuf</span><span class="tag">OBD-II</span></div>
-    </div>
-
-    <div class="card exp-card reveal">
-      <img src="car.png" alt="UBC Formula Electric car at competition" class="exp-img" style="object-position:center 50%">
-      <div class="exp-company">UBC Formula Electric &mdash; FSAE</div>
-      <div class="exp-role">Vehicle Controls<br>Firmware Developer</div>
-      <div class="exp-period">SEPT 2024 &mdash; PRESENT // Vancouver, BC</div>
-      <p class="exp-summary">Real-time firmware and controls development for a Formula SAE electric racecar using custom hardware and a shared embedded software stack.</p>
-      <ul class="bullet-list">
-        <li>Real-time firmware on <strong>custom STM32H5/H7 boards</strong> &mdash; FreeRTOS tasks, CAN-FD, SPI, I2C, UART, ADC/GPIO with GoogleTest coverage</li>
-        <li>Designed a <strong>hardware-agnostic eFuse driver</strong> with DMA-based current sensing, fault handling, and retry logic</li>
-        <li><strong>CORDIC accelerator driver</strong> cutting trig CPU cycles 3&times; &mdash; directly reducing torque vectoring loop latency</li>
-        <li><strong>Yaw Rate Controller</strong> (PID + load-transfer torque allocation) &mdash; modeled in Simulink, deployed in C, validated on car</li>
-        <li>Built an <strong>Extended Kalman Filter</strong> fusing IMU, wheel speed, GPS, and slip detection for sub-10 km/h velocity estimation</li>
-      </ul>
-      <div class="tag-row"><span class="tag hi">STM32H5/H7</span><span class="tag hi">FreeRTOS</span><span class="tag hi">CAN-FD</span><span class="tag">SPI / I2C</span><span class="tag">Simulink</span><span class="tag">GoogleTest</span></div>
-      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link" style="margin-top:12px">View Repository</a>
-    </div>
-
-  </div>
-</section>
-
-<!-- 05 CAPABILITIES -->
+<!-- 04 TECHNICAL CAPABILITIES -->
 <section id="capabilities">
-  <div class="section-header reveal"><span class="section-num">05 //</span><h2>CAPABILITIES</h2><div class="section-rule"></div></div>
+  <div class="section-header reveal"><span class="section-num">04 //</span><h2>TECHNICAL CAPABILITIES</h2><div class="section-rule"></div></div>
   <p class="section-copy reveal">The technical areas where I have the strongest hands-on depth today.</p>
   <div class="cap-grid">
 
@@ -645,6 +608,43 @@ footer span { color: var(--grn); }
         <li>Reinforcement learning (PPO), CNN-based localization, and LiDAR path planning</li>
         <li>Verilog / FPGA digital design &mdash; CPU datapath and hardware verification</li>
       </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- 05 MORE ENGINEERING WORK -->
+<section id="morework">
+  <div class="section-header reveal"><span class="section-num">05 //</span><h2>MORE ENGINEERING WORK</h2><div class="section-rule"></div></div>
+  <p class="section-copy reveal">Additional engineering work across embedded firmware, autonomy, hardware design, and engineering tooling.</p>
+  <div class="work-grid">
+
+    <div class="card work-card reveal">
+      <div class="work-title">eFuse Driver Architecture</div>
+      <p class="work-desc">Shared, <strong>hardware-agnostic eFuse driver</strong> for Formula Electric custom boards &mdash; sense-line fault detection, async ADC acquisition via DMA for current sensing, retry logic, and power state management.</p>
+      <div class="tag-row"><span class="tag hi">C / C++</span><span class="tag hi">STM32</span><span class="tag">ADC / DMA</span><span class="tag">Fault Handling</span></div>
+      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
+    </div>
+
+    <div class="card work-card reveal">
+      <div class="work-title">CORDIC Accelerator Driver</div>
+      <p class="work-desc">Developed a <strong>CORDIC hardware driver</strong> on STM32H7, replacing software trig in the torque-vectoring firmware path. Required careful Q1.31 fixed-point handling and phase inversion debugging to achieve correct results.</p>
+      <div class="tag-row"><span class="tag hi">C</span><span class="tag hi">STM32H7</span><span class="tag">CORDIC</span><span class="tag">Fixed-Point</span></div>
+      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
+    </div>
+
+    <div class="card work-card reveal">
+      <div class="work-title">F1Tenth Autonomous Car</div>
+      <p class="work-desc">Trained a <strong>PPO RL policy</strong> for 10M+ timesteps and deployed to a physical F1Tenth robot via ROS2, cutting lap time 50% with zero collisions across 30+ runs. Deployed a <strong>CNN-based localizer</strong> at 99% accuracy on 5000+ labeled frames.</p>
+      <div class="tag-row"><span class="tag hi">Python</span><span class="tag hi">C++</span><span class="tag">ROS2</span><span class="tag">PyTorch</span><span class="tag">Reinforcement Learning</span></div>
+      <span class="text-private">&#128274; Private &mdash; demo available</span>
+    </div>
+
+    <div class="card work-card reveal">
+      <div class="work-title">16-bit ARM CPU on FPGA</div>
+      <p class="work-desc">Designed a <strong>16-bit ARM-inspired CPU</strong> from scratch in Verilog &mdash; full datapath including ALU, register file, control unit, and memory interface, synthesized and validated on FPGA hardware with a suite of assembly test programs.</p>
+      <div class="tag-row"><span class="tag hi">Verilog</span><span class="tag hi">FPGA</span><span class="tag">ARM Architecture</span><span class="tag">Digital Design</span></div>
+      <span class="text-private">&#128274; Private &mdash; demo available</span>
     </div>
 
   </div>
