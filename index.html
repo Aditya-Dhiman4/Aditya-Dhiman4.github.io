@@ -753,7 +753,7 @@ footer span { color: var(--grn); }
         <li>EKF-based body velocity estimation fusing IMU, wheel speed, GPS, and slip logic</li>
         <li>Yaw-rate control, torque vectoring, and load-transfer-aware torque allocation</li>
         <li>MATLAB / Simulink modeling and embedded C deployment with on-car validation</li>
-        <li>Chi-squared innovation gating, adaptive noise covariance, and Jacobian derivation</li>
+        <li>Innovation gating, adaptive noise covariance, and Jacobian derivation</li>
       </ul>
     </div>
 
@@ -762,9 +762,9 @@ footer span { color: var(--grn); }
       <div class="cap-title">Autonomy work spanning perception, simulation, planning, and deployment</div>
       <ul class="cap-list">
         <li>ROS2 node architecture, F1Tenth deployment, and sim-to-real experimentation</li>
-        <li>YOLO-based object detection with keypoint regression and 3D pose via PnP</li>
-        <li>Reinforcement learning (PPO), CNN-based localization, and LiDAR path planning</li>
-        <li>Verilog / FPGA digital design &mdash; CPU datapath and hardware verification</li>
+        <li>CNN-based track-point detection from labeled camera frames</li>
+        <li>Reinforcement learning (PPO) policy training and LiDAR path planning</li>
+        <li>Physical robot deployment, testing, and performance validation</li>
       </ul>
     </div>
 
@@ -793,7 +793,7 @@ footer span { color: var(--grn); }
 
     <div class="card work-card reveal">
       <div class="work-title">F1Tenth Autonomous Car</div>
-      <p class="work-desc">Trained a <strong>PPO RL policy</strong> for 10M+ timesteps and deployed to a physical F1Tenth robot via ROS2, cutting lap time 50% with zero collisions across 30+ runs. Deployed a <strong>CNN-based localizer</strong> at 99% accuracy on 5000+ labeled frames.</p>
+      <p class="work-desc">Trained a <strong>PPO RL policy</strong> for 10M+ timesteps and deployed to a physical F1Tenth robot via ROS2, cutting lap time 50% with zero collisions across 30+ runs. Built a <strong>CNN-based track-point detector</strong> from 5000+ labeled camera frames.</p>
       <div class="tag-row"><span class="tag hi">Python</span><span class="tag hi">C++</span><span class="tag">ROS2</span><span class="tag">PyTorch</span><span class="tag">Reinforcement Learning</span></div>
       <span class="text-private">&#128274; Private &mdash; demo available</span>
     </div>
@@ -868,7 +868,7 @@ var boot  = document.getElementById("boot");
 var main  = document.getElementById("main");
 var hint  = document.getElementById("boot-hint");
 var idx = 0, done = false;
-var delays = [50, 50, 80, 110, 110, 90, 40, 90, 90, 90, 40, 320];
+var delays = [50, 50, 78, 98, 98, 82, 40, 88, 88, 88, 40, 150];
 
 function completeBoot() {
   if (done) return;
@@ -880,7 +880,7 @@ function completeBoot() {
     main.classList.add("visible");
     setTimeout(fireStatusLines, 500);
     setTimeout(function(){ boot.style.display = "none"; }, 600);
-  }, 160);
+  }, 120);
 }
 function nextLine() {
   if (done) return;
@@ -891,10 +891,10 @@ function nextLine() {
     setTimeout(nextLine, d);
   } else {
     hint.classList.add("show");
-    setTimeout(completeBoot, 2400);
+    setTimeout(completeBoot, 920);
   }
 }
-setTimeout(nextLine, 280);
+setTimeout(nextLine, 250);
 window.addEventListener("scroll",  completeBoot, { once: true, passive: true });
 window.addEventListener("keydown", completeBoot, { once: true });
 document.getElementById("boot").addEventListener("click", completeBoot, { once: true });
