@@ -76,11 +76,14 @@ nav ul li a { font-family: var(--font-mono); font-size: 11px; color: var(--text-
 nav ul li a:hover { color: var(--grn); }
 
 /* HERO */
-#hero { min-height: 78vh; padding: calc(var(--header-h) + 56px) 48px 70px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+#hero { padding: calc(var(--header-h) + 44px) 48px 42px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
 #hero::after { content: ""; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px; background: radial-gradient(circle, var(--grn-glow) 0%, transparent 70%); pointer-events: none; }
 .hero-terminal {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 1480px;
+  margin: 0 auto;
   border: 1px solid var(--border-hi);
   background: linear-gradient(180deg, rgba(10,10,10,.98), rgba(7,7,7,.98));
   overflow: hidden;
@@ -113,7 +116,7 @@ nav ul li a:hover { color: var(--grn); }
 }
 .terminal-body {
   display: grid;
-  grid-template-columns: minmax(0, 1.28fr) 320px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
   align-items: stretch;
   position: relative;
   z-index: 1;
@@ -201,10 +204,95 @@ h2 { font-family: var(--font-disp); font-size: clamp(36px, 5vw, 56px); font-weig
 .result-card p { font-size: 12px; color: var(--text-mid); line-height: 1.75; }
 
 /* PROJECTS */
-.case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; width: 100%; max-width: 1760px; margin: 0 auto; background: var(--border); border: 1px solid var(--border); }
 .case-card { padding: 40px; display: flex; flex-direction: column; gap: 24px; }
 .case-card::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--grn), transparent); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
 .case-card:hover::after { transform: scaleX(1); }
+.case-card-feature {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(480px, 1.05fr) minmax(0, .95fr);
+  gap: 0;
+  padding: 0;
+}
+.case-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+.case-card-feature .case-content {
+  padding: 36px 40px;
+}
+.case-media {
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(circle at top right, rgba(95,189,245,.12), transparent 32%),
+    linear-gradient(180deg, rgba(15,19,21,.95), rgba(8,9,10,.98));
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.case-card-feature .case-media {
+  margin-bottom: 0;
+  border: 0;
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(430px, 32vw, 580px);
+}
+.case-media-board {
+  background:
+    radial-gradient(circle at top right, rgba(95,189,245,.12), transparent 34%),
+    linear-gradient(180deg, rgba(15,19,21,.95), rgba(8,9,10,.98));
+}
+.case-media-plot {
+  background:
+    radial-gradient(circle at top right, rgba(95,189,245,.1), transparent 34%),
+    linear-gradient(180deg, rgba(17,19,20,.96), rgba(7,8,8,.99));
+}
+.case-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, rgba(34,201,122,.04));
+  pointer-events: none;
+}
+.case-img {
+  width: 100%;
+  height: 240px;
+  object-fit: contain;
+  object-position: center;
+  filter: saturate(.92) brightness(.96);
+  transition: filter .25s ease, transform .25s ease;
+}
+.case-image-trigger {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  cursor: zoom-in;
+  position: relative;
+  z-index: 1;
+}
+.case-image-trigger:focus-visible {
+  outline: 1px solid var(--grn);
+  outline-offset: -5px;
+}
+.case-card-feature .case-img {
+  height: 100%;
+}
+.case-img-fill { object-fit: cover; }
+.case-img-plot { object-fit: contain; }
+.case-card:hover .case-img,
+.case-image-trigger:focus-visible .case-img {
+  filter: saturate(1) brightness(1);
+  transform: translateY(-2px);
+}
 .case-index { font-size: 10px; color: var(--text-dim); letter-spacing: .15em; text-transform: uppercase; }
 .case-title { font-family: var(--font-disp); font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.05; }
 .case-lede { font-size: 12.5px; color: var(--text-mid); line-height: 1.8; }
@@ -213,6 +301,53 @@ h2 { font-family: var(--font-disp); font-size: clamp(36px, 5vw, 56px); font-weig
 .case-dl dt { font-size: 10px; color: var(--grn); letter-spacing: .15em; text-transform: uppercase; }
 .case-dl dd { font-size: 12px; color: var(--text-mid); line-height: 1.75; }
 .case-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 4px; }
+
+/* IMAGE VIEWER */
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(10px);
+}
+.image-modal.open { display: flex; }
+.image-modal-frame {
+  position: relative;
+  width: min(94vw, 1800px);
+  max-height: 92vh;
+  border: 1px solid var(--border-hi);
+  background: #050505;
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+}
+.image-modal-img {
+  width: 100%;
+  max-height: 92vh;
+  object-fit: contain;
+  padding: 16px;
+}
+.image-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-hi);
+  background: rgba(7,7,7,.88);
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.image-modal-close:hover,
+.image-modal-close:focus-visible {
+  border-color: var(--grn);
+  color: var(--grn);
+  outline: none;
+}
 
 /* MORE WORK */
 .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
@@ -294,21 +429,29 @@ footer span { color: var(--grn); }
 @media (max-width: 960px) {
   nav { padding: 0 24px; }
   nav ul { gap: 16px; }
-  #hero { padding: 110px 24px 60px; }
+  #hero { padding: 100px 24px 42px; }
   .terminal-body { grid-template-columns: 1fr; }
   .hero-left { padding: 32px 28px; }
   .hero-readout { width: 100%; padding: 24px 28px 28px; border-left: 0; border-top: 1px solid var(--border); }
   section { padding: 64px 24px; }
   .case-grid, .exp-grid, .contact-inner { grid-template-columns: 1fr; }
+  .case-card-feature { grid-template-columns: 1fr; }
+  .case-card-feature .case-media { border-right: 0; border-bottom: 1px solid var(--border); height: auto; }
+  .case-card-feature .case-media-board { aspect-ratio: 1.25; }
+  .case-card-feature .case-media-plot { aspect-ratio: 1.6; }
+  .case-card-feature .case-content { padding: 32px 28px; }
   .cap-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
   nav ul { display: none; }
   .work-grid { grid-template-columns: 1fr 1fr; }
   .case-dl { grid-template-columns: 1fr; }
+  .case-card-feature .case-dl { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
   .work-grid, .results-grid { grid-template-columns: 1fr; }
+  .image-modal { padding: 12px; }
+  .image-modal-img { padding: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -485,56 +628,70 @@ footer span { color: var(--grn); }
   <p class="section-copy reveal">Front-facing engineering work with enough depth to discuss design choices, tradeoffs, validation, and impact.</p>
   <div class="case-grid">
 
-    <div class="card case-card reveal">
-      <div>
-        <div class="case-index">// Project 01</div>
-        <div class="case-title">Body Velocity EKF</div>
-        <p class="case-lede" style="margin-top:10px">Low-speed state estimation for a Formula Electric car where tire slip makes wheel-speed-derived velocity unreliable.</p>
+    <div class="card case-card case-card-feature reveal">
+      <div class="case-media case-media-board">
+        <button class="case-image-trigger" type="button" data-full="vc.png" data-title="Formula Electric Device Drivers" aria-label="Open Formula Electric Device Drivers image">
+          <img class="case-img case-img-fill" src="vc.png" alt="UBC Formula Electric vehicle controller board used for device-driver and firmware development.">
+        </button>
       </div>
-      <dl class="case-dl">
-        <div><dt>Problem</dt><dd>Launch, braking, and low-speed cornering create operating points where the control stack still needs body velocity, but raw wheel speed is not trustworthy.</dd></div>
-        <div><dt>What I Built</dt><dd>A low-speed EKF in C++ and Simulink fusing IMU, wheel speed, GPS, and slip logic with chi-squared innovation gating for cleaner state estimates.</dd></div>
-        <div><dt>Technical Challenge</dt><dd>Balancing estimator responsiveness against noisy or corrupted inputs while handling nonlinear measurement models and Jacobian derivation under real-time constraints.</dd></div>
-        <div><dt>Result</dt><dd>Usable velocity estimates below 10 km/h and a stronger foundation for the torque-vectoring and yaw-rate control stack deployed on car.</dd></div>
-      </dl>
-      <div class="case-footer">
-        <div class="tag-row" style="margin-top:0"><span class="tag hi">C++</span><span class="tag hi">Simulink</span><span class="tag">EKF</span><span class="tag">GPS / IMU Fusion</span><span class="tag">State Estimation</span></div>
-        <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
+      <div class="case-content">
+        <div>
+          <div class="case-index">// Project 01</div>
+          <div class="case-title">Formula Electric Device Drivers</div>
+          <p class="case-lede" style="margin-top:10px">Board-level firmware and shared driver architecture underpinning controls, sensing, and power distribution across the car.</p>
+        </div>
+        <dl class="case-dl">
+          <div><dt>Problem</dt><dd>Higher-level vehicle controls are only as reliable as the low-level driver layer that powers sensors, buses, and fault handling.</dd></div>
+          <div><dt>What I Built</dt><dd>Driver work spanning eFuse power control with DMA-based current sensing, IMU acquisition over SPI, CORDIC hardware acceleration, and CAN-FD messaging under FreeRTOS.</dd></div>
+          <div><dt>Technical Challenge</dt><dd>Keeping firmware hardware-agnostic across boards while handling asynchronous ADC/DMA timing, retry logic, and tight compute budgets on STM32 MCUs.</dd></div>
+          <div><dt>Result</dt><dd>3&times; reduction in trig CPU cost for control math, improved startup robustness, and a cleaner shared firmware base for new board bring-up.</dd></div>
+        </dl>
+        <div class="case-footer">
+          <div class="tag-row" style="margin-top:0"><span class="tag hi">C / C++</span><span class="tag hi">STM32H5/H7</span><span class="tag hi">FreeRTOS</span><span class="tag">CAN-FD</span><span class="tag">ADC / DMA</span></div>
+          <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
+        </div>
       </div>
     </div>
 
-    <div class="card case-card reveal">
-      <div>
-        <div class="case-index">// Project 02</div>
-        <div class="case-title">Yaw Rate Controller &amp; Torque Vectoring</div>
-        <p class="case-lede" style="margin-top:10px">Real-time vehicle-dynamics control work aimed at making torque allocation responsive and stable across the full operating envelope.</p>
+    <div class="card case-card case-card-feature reveal">
+      <div class="case-media case-media-plot">
+        <button class="case-image-trigger" type="button" data-full="body_vel_ekf_results.png" data-title="Body Velocity Extended Kalman Filter" aria-label="Open Body Velocity EKF results image">
+          <img class="case-img case-img-plot" src="body_vel_ekf_results.png" alt="Body velocity EKF estimation results plotted against vehicle data.">
+        </button>
       </div>
-      <dl class="case-dl">
-        <div><dt>Problem</dt><dd>Hitting a driver-requested yaw response requires control logic that stays reliable across load transfer, sensor noise, and hard real-time firmware constraints.</dd></div>
-        <div><dt>What I Built</dt><dd>A PID-based yaw-rate controller and load-transfer-aware torque allocator modeled in Simulink and deployed into embedded C for the Formula Electric vehicle.</dd></div>
-        <div><dt>Technical Challenge</dt><dd>Bridging controller design from simulation into deterministic firmware while keeping the loop fast enough for on-car validation without a hardware-in-the-loop rig.</dd></div>
-        <div><dt>Result</dt><dd>Integrated controller validated alongside the EKF estimator and driver layer; forms the real-time controls backbone currently running on the car.</dd></div>
-      </dl>
-      <div class="case-footer">
-        <div class="tag-row" style="margin-top:0"><span class="tag hi">C</span><span class="tag hi">Simulink</span><span class="tag">PID</span><span class="tag">Torque Vectoring</span><span class="tag">Vehicle Dynamics</span></div>
-        <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
+      <div class="case-content">
+        <div>
+          <div class="case-index">// Project 02</div>
+          <div class="case-title">Body Velocity Extended Kalman Filter</div>
+          <p class="case-lede" style="margin-top:10px">Low-speed state estimation for a Formula Electric car where tire slip makes wheel-speed-derived velocity unreliable.</p>
+        </div>
+        <dl class="case-dl">
+          <div><dt>Problem</dt><dd>Launch, braking, and low-speed cornering create operating points where the control stack still needs body velocity, but raw wheel speed is not trustworthy.</dd></div>
+          <div><dt>What I Built</dt><dd>A low-speed EKF in C++ and Simulink fusing IMU, wheel speed, GPS, and slip ratio gating for cleaner state estimates.</dd></div>
+          <div><dt>Technical Challenge</dt><dd>Balancing estimator responsiveness against noisy or corrupted inputs while handling nonlinear measurement models and Jacobian derivation under real-time constraints.</dd></div>
+          <div><dt>Result</dt><dd>Usable velocity estimates below 10 km/h and a stronger foundation for the torque-vectoring and yaw-rate control stack deployed on car.</dd></div>
+        </dl>
+        <div class="case-footer">
+          <div class="tag-row" style="margin-top:0"><span class="tag hi">C++</span><span class="tag hi">Simulink</span><span class="tag">EKF</span><span class="tag">GPS / IMU Fusion</span><span class="tag">State Estimation</span></div>
+          <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
+        </div>
       </div>
     </div>
 
     <div class="card case-card reveal">
       <div>
         <div class="case-index">// Project 03</div>
-        <div class="case-title">Formula Electric Device Drivers</div>
-        <p class="case-lede" style="margin-top:10px">Board-level firmware and shared driver architecture underpinning controls, sensing, and power distribution across the car.</p>
+        <div class="case-title">Yaw Rate Controller &amp; Torque Vectoring</div>
+        <p class="case-lede" style="margin-top:10px">Real-time vehicle-dynamics control work aimed at making torque allocation responsive and stable across the full operating envelope.</p>
       </div>
       <dl class="case-dl">
-        <div><dt>Problem</dt><dd>Higher-level vehicle controls are only as reliable as the low-level driver layer that powers sensors, buses, and fault handling.</dd></div>
-        <div><dt>What I Built</dt><dd>Driver work spanning eFuse power control with DMA-based current sensing, IMU acquisition over SPI, CORDIC hardware acceleration, and CAN-FD messaging under FreeRTOS.</dd></div>
-        <div><dt>Technical Challenge</dt><dd>Keeping firmware hardware-agnostic across boards while handling asynchronous ADC/DMA timing, retry logic, and tight compute budgets on STM32 MCUs.</dd></div>
-        <div><dt>Result</dt><dd>3&times; reduction in trig CPU cost for control math, improved startup robustness, and a cleaner shared firmware base for new board bring-up.</dd></div>
+        <div><dt>Problem</dt><dd>Controlling a Quad Motor over-actuated system requires control logic that stays reliable across load transfer, sensor noise, and hard real-time firmware constraints.</dd></div>
+        <div><dt>What I Built</dt><dd>A PID-based yaw-rate controller and load-transfer-aware torque allocator modeled in Simulink and deployed into embedded C for the Formula Electric vehicle.</dd></div>
+        <div><dt>Technical Challenge</dt><dd>Bridging controller design from simulation into deterministic firmware while keeping the loop fast enough for on-car validation without a hardware-in-the-loop rig.</dd></div>
+        <div><dt>Result</dt><dd>Integrated controller validated alongside the EKF estimator and driver layer; forms the real-time controls backbone currently running on the car.</dd></div>
       </dl>
       <div class="case-footer">
-        <div class="tag-row" style="margin-top:0"><span class="tag hi">C / C++</span><span class="tag hi">STM32H5/H7</span><span class="tag hi">FreeRTOS</span><span class="tag">CAN-FD</span><span class="tag">ADC / DMA</span></div>
+        <div class="tag-row" style="margin-top:0"><span class="tag hi">C</span><span class="tag hi">Simulink</span><span class="tag">PID</span><span class="tag">Torque Vectoring</span><span class="tag">Vehicle Dynamics</span></div>
         <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
       </div>
     </div>
@@ -689,6 +846,13 @@ footer span { color: var(--grn); }
 
 </div>
 
+<div class="image-modal" id="image-modal" role="dialog" aria-modal="true" aria-label="Expanded project image">
+  <div class="image-modal-frame">
+    <button class="image-modal-close" type="button" aria-label="Close expanded image">&times;</button>
+    <img class="image-modal-img" id="image-modal-img" alt="">
+  </div>
+</div>
+
 <script>
 (function(){
   var a = "aditya16dhiman" + "@" + "gmail.com";
@@ -747,6 +911,40 @@ var observer = new IntersectionObserver(function(entries){
   });
 }, { threshold: 0.08, rootMargin: "0px 0px -32px 0px" });
 document.querySelectorAll(".reveal").forEach(function(r){ observer.observe(r); });
+
+// Project image viewer
+var imageModal = document.getElementById("image-modal");
+var imageModalImg = document.getElementById("image-modal-img");
+var imageModalClose = imageModal.querySelector(".image-modal-close");
+var lastImageTrigger = null;
+
+function closeImageModal() {
+  imageModal.classList.remove("open");
+  imageModalImg.removeAttribute("src");
+  imageModalImg.alt = "";
+  document.body.style.overflow = "";
+  if (lastImageTrigger) lastImageTrigger.focus();
+}
+
+document.querySelectorAll(".case-image-trigger").forEach(function(trigger){
+  trigger.addEventListener("click", function(){
+    lastImageTrigger = trigger;
+    imageModalImg.src = trigger.getAttribute("data-full");
+    imageModalImg.alt = trigger.querySelector("img").alt;
+    imageModal.setAttribute("aria-label", trigger.getAttribute("data-title"));
+    imageModal.classList.add("open");
+    document.body.style.overflow = "hidden";
+    imageModalClose.focus();
+  });
+});
+
+imageModalClose.addEventListener("click", closeImageModal);
+imageModal.addEventListener("click", function(e){
+  if (e.target === imageModal) closeImageModal();
+});
+window.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && imageModal.classList.contains("open")) closeImageModal();
+});
 </script>
 </body>
 </html>
