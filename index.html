@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aditya Dhiman — Embedded Systems Engineer</title>
-<meta name="description" content="Embedded firmware and automotive software engineer. UBC Computer Engineering, interning at RV Tech on infotainment ECUs, vehicle controls at UBC Formula Electric.">
+<meta name="description" content="Embedded firmware and automotive software engineer. UBC Computer Engineering, interning at Tesla AI Platform on Autopilot firmware, previously RV Tech on infotainment ECUs, vehicle controls at UBC Formula Electric.">
 <meta property="og:title" content="Aditya Dhiman — Embedded Systems Engineer">
-<meta property="og:description" content="Embedded firmware, automotive software, and real-time controls. UBC CompEng, interning at RV Tech (Rivian × Volkswagen).">
+<meta property="og:description" content="Embedded firmware, automotive software, and real-time controls. UBC CompEng, interning at Tesla AI Platform.">
 <meta property="og:url" content="https://aditya-dhiman4.github.io">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -442,6 +442,7 @@ footer span { color: var(--grn); }
   .case-card-feature .case-media-plot { aspect-ratio: 1.6; }
   .case-card-feature .case-content { padding: 32px 28px; }
   .cap-grid { grid-template-columns: 1fr; }
+  .exp-card-featured { grid-column: 1 !important; }
 }
 @media (max-width: 720px) {
   nav ul { display: none; }
@@ -475,7 +476,7 @@ footer span { color: var(--grn); }
     <div class="boot-line c-dim">&nbsp;</div>
     <div class="boot-line c-wht">IDENTITY &rarr; ADITYA DHIMAN</div>
     <div class="boot-line c-wht">ROLE &rarr; EMBEDDED SYSTEMS ENGINEER</div>
-    <div class="boot-line c-wht">STATUS &rarr; AVAILABLE &mdash; SUMMER / FALL 2026</div>
+    <div class="boot-line c-wht">STATUS &rarr; INTERNING AT TESLA &mdash; AI PLATFORM</div>
     <div class="boot-line c-dim">&nbsp;</div>
     <div class="boot-line c-grn">MOUNTING PORTFOLIO... <span id="boot-cursor"></span></div>
   </div>
@@ -485,7 +486,7 @@ footer span { color: var(--grn); }
 <div id="main">
 
 <nav>
-  <div class="nav-id">AD<span>/</span>FIRMWARE</div>
+  <div class="nav-id">AD</div>
   <ul>
     <li><a href="#results">RESULTS</a></li>
     <li><a href="#experience">EXP</a></li>
@@ -500,7 +501,7 @@ footer span { color: var(--grn); }
 <section id="hero">
   <div class="hero-terminal reveal">
     <div class="terminal-bar">
-      <span class="terminal-bar-label">aditya@embedded: ~/portfolio</span>
+      <span class="terminal-bar-label">aditya.dhiman: ~/portfolio</span>
       <div class="readout-lights">
         <div class="readout-light"></div>
         <div class="readout-light alt"></div>
@@ -509,7 +510,6 @@ footer span { color: var(--grn); }
     </div>
     <div class="terminal-body">
       <div class="hero-left">
-        <p class="hero-cmd"><span class="prompt">$</span> ./portfolio --focus embedded-systems</p>
         <div class="hero-tag"><span class="status-dot"></span>Embedded Systems &middot; Vehicle Controls &middot; Real-time Firmware</div>
         <h1>ADITYA<br><span class="accent">DHIMAN</span></h1>
         <p class="hero-sub">I build <strong>embedded systems</strong> — from <strong>Linux-based</strong> production tooling to <strong>RTOS firmware</strong> and real-time <strong>vehicle controls</strong>.</p>
@@ -526,7 +526,7 @@ footer span { color: var(--grn); }
           <p class="readout-cmd"><span class="prompt">$</span> cat system_summary.log</p>
           <div class="readout-row">
             <span class="readout-key">role</span>
-            <span class="readout-val">UBC Computer Engineering &mdash; May 2027</span>
+            <span class="readout-val">UBC Computer Engineering</span>
           </div>
           <div class="readout-row">
             <span class="readout-key">focus</span>
@@ -534,11 +534,11 @@ footer span { color: var(--grn); }
           </div>
           <div class="readout-row">
             <span class="readout-key">teams</span>
-            <span class="readout-val">RV Tech (Rivian &times; VWGT) &amp; UBC Formula Electric</span>
+            <span class="readout-val">Tesla AI Platform &bull; RV Tech (Rivian &times; VWGT) &bull; Formula Electric</span>
           </div>
           <div class="readout-row">
             <span class="readout-key">status</span>
-            <span class="readout-val" style="color:var(--grn)">Available &mdash; Summer / Fall 2026</span>
+            <span class="readout-val" style="color:var(--grn)">Interning at Tesla &mdash; AI Platform</span>
           </div>
           <div class="readout-divider"></div>
           <div class="status-lines">
@@ -587,11 +587,25 @@ footer span { color: var(--grn); }
   <div class="section-header reveal"><span class="section-num">02 //</span><h2>EXPERIENCE</h2><div class="section-rule"></div></div>
   <div class="exp-grid">
 
+    <!-- Tesla — spans full width as current role -->
+    <div class="card exp-card reveal" style="grid-column: 1 / -1;">
+      <img src="teslacybercab.png" alt="Tesla Cybercab" class="exp-img" style="object-position:center 50%">
+      <div class="exp-company">Tesla</div>
+      <div class="exp-role">Embedded Software<br>Engineer Intern &mdash; AI Platform</div>
+      <div class="exp-period">JUNE 2026 &mdash; PRESENT // Palo Alto, CA</div>
+      <p class="exp-summary">Bare-metal firmware development and production fleet reliability work on Tesla&rsquo;s Autopilot compute hardware.</p>
+      <ul class="bullet-list">
+        <li>Developing and improving real-time <strong>bare-metal firmware</strong> for Autopilot compute hardware in <strong>C/C++</strong>, working at the hardware-software interface to optimize system behavior and reliability</li>
+        <li>Triaging <strong>MCU reset causes</strong> across production vehicle fleets by analyzing <strong>CAN bus logs</strong> and real-time <strong>embedded diagnostic logs</strong> from the MCU; identifying root causes and resolving firmware bugs to improve vehicle reliability and Autopilot safety</li>
+      </ul>
+      <div class="tag-row"><span class="tag hi">Bare-Metal C/C++</span><span class="tag hi">Autopilot Hardware</span><span class="tag hi">CAN Bus</span><span class="tag">Embedded Diagnostics</span><span class="tag">Production Fleet</span></div>
+    </div>
+
     <div class="card exp-card reveal">
       <img src="rivianr1t.png" alt="Rivian R1T" class="exp-img" style="object-position:center 70%">
       <div class="exp-company">Rivian &times; Volkswagen Group Technologies</div>
       <div class="exp-role">Embedded Software<br>Engineer Intern</div>
-      <div class="exp-period">SEPT 2025 &mdash; PRESENT // Vancouver, BC</div>
+      <div class="exp-period">SEPT 2025 &mdash; APRIL 2026 // Vancouver, BC</div>
       <p class="exp-summary">Production embedded systems work spanning Linux tooling, diagnostics, developer infrastructure, and resilient logging for next-generation ECUs.</p>
       <ul class="bullet-list">
         <li>Implemented an <strong>Ethernet switch manager</strong> for next-gen ECUs handling link status, thermal monitoring, and OBD diagnostics over RMU &mdash; shipped to production firmware</li>
@@ -814,8 +828,8 @@ footer span { color: var(--grn); }
     <div class="reveal">
       <h2 style="font-family:var(--font-disp);font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-.02em">CONTACT ME</h2>
       <p class="contact-sub">
-        Currently pursuing Computer Engineering at UBC (May 2027).<br>
-        Available for internships Summer / Fall 2026.<br><br>
+        Currently pursuing Computer Engineering at UBC.<br>
+        Currently interning at Tesla &mdash; AI Platform, Palo Alto.<br><br>
         Interested in embedded software, controls, firmware, and production systems roles where reliability and systems thinking matter.
       </p>
     </div>
@@ -841,7 +855,7 @@ footer span { color: var(--grn); }
 </section>
 
 <footer>
-  <p>ADITYA DHIMAN // EMBEDDED SYSTEMS // UBC <span>2027</span></p>
+  <p>ADITYA DHIMAN // EMBEDDED SYSTEMS // UBC</p>
   <p>Plain HTML &amp; CSS // <span id="yr"></span></p>
 </footer>
 
