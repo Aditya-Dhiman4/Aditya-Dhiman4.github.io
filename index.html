@@ -1,965 +1,1027 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
 <title>Aditya Dhiman — Embedded Systems Engineer</title>
-<meta name="description" content="Embedded firmware and automotive software engineer. UBC Computer Engineering, interning at Tesla AI Platform on Autopilot firmware, previously RV Tech on infotainment ECUs, vehicle controls at UBC Formula Electric.">
-<meta property="og:title" content="Aditya Dhiman — Embedded Systems Engineer">
-<meta property="og:description" content="Embedded firmware, automotive software, and real-time controls. UBC CompEng, interning at Tesla AI Platform.">
-<meta property="og:url" content="https://aditya-dhiman4.github.io">
-<meta property="og:type" content="website">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:        #070707;
-  --bg-card:   #0D0D0D;
-  --bg-raised: #131313;
-  --border:    #1C1C1C;
-  --border-hi: #2A2A2A;
-  --grn:       #22C97A;
-  --grn-dim:   #0F6B3E;
-  --grn-glow:  #22C97A33;
-  --grn-alt:   #5fbdf5;
-  --text:      #E8E8E8;
-  --text-mid:  #A0A0A0;
-  --text-dim:  #505050;
-  --font-mono: "JetBrains Mono", monospace;
-  --font-disp: "Barlow Condensed", sans-serif;
-  --header-h:  54px;
-  --content-max: 1920px;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-img  { display: block; max-width: 100%; }
-body {
-  background: var(--bg); color: var(--text);
-  font-family: var(--font-mono); font-size: 14px; line-height: 1.7;
-  overflow-x: hidden; cursor: crosshair;
-}
-::selection { background: var(--grn); color: #000; }
-body::before {
-  content: ""; position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
-  pointer-events: none; z-index: 9999;
-}
-
-/* BOOT */
-#boot {
-  position: fixed; inset: 0; background: var(--bg); z-index: 9000;
-  display: flex; align-items: center; justify-content: center; padding: 40px;
-  transition: opacity .5s ease;
-}
-#boot.fade-out { opacity: 0; pointer-events: none; }
-#boot-terminal { width: 100%; max-width: 680px; }
-.boot-line { font-family: var(--font-mono); font-size: 12px; line-height: 2; opacity: 0; transition: opacity .05s; }
-.boot-line.c-grn { color: var(--grn); }
-.boot-line.c-dim  { color: var(--text-dim); }
-.boot-line.c-wht  { color: var(--text); }
-.boot-line.show   { opacity: 1; }
-#boot-cursor { display: inline-block; width: 8px; height: 14px; background: var(--grn); animation: blink .8s step-end infinite; vertical-align: middle; margin-left: 2px; }
-@keyframes blink { 50% { opacity: 0; } }
-.boot-hint { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: .15em; text-transform: uppercase; opacity: 0; transition: opacity .4s ease; pointer-events: none; }
-.boot-hint.show { opacity: 1; }
-
-/* MAIN */
-#main { opacity: 0; transition: opacity .7s ease; }
-#main.visible { opacity: 1; }
-
-/* NAV */
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: var(--header-h); border-bottom: 1px solid var(--border); background: rgba(7,7,7,.94); backdrop-filter: blur(12px); }
-.nav-id { font-family: var(--font-mono); font-size: 11px; color: var(--grn); letter-spacing: .12em; text-transform: uppercase; }
-.nav-id span { color: var(--text-dim); }
-nav ul { list-style: none; display: flex; gap: 28px; }
-nav ul li a { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); text-decoration: none; letter-spacing: .1em; text-transform: uppercase; transition: color .2s; }
-nav ul li a:hover { color: var(--grn); }
-
-/* HERO */
-#hero { padding: calc(var(--header-h) + 44px) 48px 42px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
-#hero::after { content: ""; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px; background: radial-gradient(circle, var(--grn-glow) 0%, transparent 70%); pointer-events: none; }
-.hero-terminal {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: var(--content-max);
-  margin: 0 auto;
-  border: 1px solid var(--border-hi);
-  background: linear-gradient(180deg, rgba(10,10,10,.98), rgba(7,7,7,.98));
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,.28);
-}
-.hero-terminal::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,.02) 3px, rgba(255,255,255,.02) 4px);
-  opacity: .14;
-  pointer-events: none;
-}
-.terminal-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(0,0,0,.35);
-  position: relative;
-  z-index: 1;
-}
-.terminal-bar-label {
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: .14em;
-  text-transform: uppercase;
-}
-.terminal-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
-  align-items: stretch;
-  position: relative;
-  z-index: 1;
-}
-.hero-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 40px 40px 42px;
-}
-.hero-cmd { font-size: 10px; color: var(--text-dim); letter-spacing: .06em; margin-bottom: 18px; }
-.hero-cmd .prompt { color: var(--grn); margin-right: 4px; }
-.hero-tag { font-family: var(--font-mono); font-size: 11px; color: var(--grn); letter-spacing: .2em; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
-.hero-tag::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--grn); }
-.status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--grn); box-shadow: 0 0 6px var(--grn); animation: pulse-dot 2s ease-in-out infinite; margin-right: 6px; }
-@keyframes pulse-dot { 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
-h1 { font-family: var(--font-disp); font-size: clamp(64px, 8vw, 108px); font-weight: 800; line-height: .9; letter-spacing: -.02em; color: var(--text); margin-bottom: 28px; }
-h1 .accent { color: var(--grn); }
-.hero-sub { font-family: var(--font-mono); font-size: 13.5px; color: var(--text-mid); line-height: 1.9; max-width: 520px; margin-bottom: 36px; }
-.hero-sub strong { color: var(--text); font-weight: 500; }
-.hero-links { display: flex; gap: 12px; flex-wrap: wrap; }
-
-/* HERO READOUT */
-.hero-readout {
-  width: auto;
-  max-width: none;
-  border: 0;
-  border-left: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(13,13,13,.7), rgba(10,10,10,.92));
-  position: relative;
-  z-index: 1;
-  align-self: stretch;
-  padding: 26px 22px 24px;
-}
-.readout-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg); }
-.readout-bar-label { font-size: 10px; color: var(--text-dim); letter-spacing: .12em; text-transform: uppercase; }
-.readout-lights { display: flex; gap: 6px; }
-.readout-light { width: 8px; height: 8px; border-radius: 50%; background: var(--border-hi); }
-.readout-light.on  { background: var(--grn);     box-shadow: 0 0 8px var(--grn); }
-.readout-light.alt { background: var(--grn-alt); box-shadow: 0 0 8px var(--grn-alt); }
-.readout-body { padding: 0; display: flex; flex-direction: column; gap: 0; }
-.readout-cmd { font-size: 10px; color: var(--text-dim); letter-spacing: .06em; margin-bottom: 12px; }
-.readout-cmd .prompt { color: var(--grn); margin-right: 4px; }
-.readout-row { display: grid; grid-template-columns: 52px 1fr; gap: 10px; padding: 10px 0; border-top: 1px dashed var(--border-hi); }
-.readout-row:first-of-type { border-top: none; padding-top: 0; }
-.readout-key { font-size: 10px; color: var(--grn); letter-spacing: .1em; text-transform: uppercase; line-height: 1.5; }
-.readout-val { font-size: 11.5px; color: var(--text-mid); line-height: 1.5; }
-.readout-divider { height: 1px; background: linear-gradient(90deg, var(--grn-dim), transparent); margin: 12px 0; }
-.status-lines { display: flex; flex-direction: column; gap: 6px; }
-.status-line { font-size: 10px; color: var(--text-dim); letter-spacing: .06em; opacity: 0; transform: translateY(4px); transition: opacity .3s ease, transform .3s ease, color .3s ease; }
-.status-line.live { opacity: 1; transform: translateY(0); color: var(--text-mid); }
-
-/* BUTTONS */
-.btn { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 11px 20px; text-decoration: none; border: 1px solid; transition: all .2s; cursor: crosshair; }
-.btn-primary { background: var(--grn); color: #000; border-color: var(--grn); font-weight: 700; }
-.btn-primary:hover { background: transparent; color: var(--grn); }
-.btn-ghost { background: transparent; color: var(--text-mid); border-color: var(--border-hi); }
-.btn-ghost:hover { border-color: var(--grn); color: var(--grn); }
-
-/* TRACE */
-.trace-container { width: 100%; overflow: hidden; height: 40px; }
-.trace-container svg { width: 200%; height: 100%; animation: scroll-trace 6s linear infinite; }
-@keyframes scroll-trace { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-/* SECTIONS */
-section { padding: 88px 48px; border-bottom: 1px solid var(--border); scroll-margin-top: calc(var(--header-h) + 16px); }
-#contact { border-bottom: none; padding-bottom: 120px; }
-.section-header { display: flex; align-items: baseline; gap: 20px; width: 100%; max-width: var(--content-max); margin: 0 auto 48px; }
-.section-num { font-family: var(--font-mono); font-size: 11px; color: var(--grn); }
-h2 { font-family: var(--font-disp); font-size: clamp(36px, 5vw, 56px); font-weight: 800; letter-spacing: -.02em; color: var(--text); line-height: 1; }
-.section-rule { flex: 1; height: 1px; background: var(--border); margin-left: 10px; align-self: center; }
-.section-copy { font-size: 13px; color: var(--text-mid); line-height: 1.9; width: min(64ch, 100%); margin: -20px 0 48px max(0px, calc((100% - var(--content-max)) / 2)); }
-
-/* CARD BASE */
-.card { background: var(--bg-card); border: 1px solid var(--border); position: relative; overflow: hidden; transition: background .2s, border-color .2s; }
-.card:hover { background: var(--bg-raised); border-color: var(--border-hi); }
-.card::before { content: ""; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--grn); opacity: 0; transition: opacity .2s; }
-.card:hover::before { opacity: 1; }
-
-/* RESULTS */
-.results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; width: 100%; max-width: var(--content-max); margin: 0 auto; background: var(--border); border: 1px solid var(--border); }
-.result-card { padding: 36px 28px; display: flex; flex-direction: column; gap: 10px; }
-.result-metric { font-family: var(--font-disp); font-size: clamp(40px, 5vw, 60px); font-weight: 800; color: var(--grn); line-height: 1; letter-spacing: -.02em; }
-.result-card h3 { font-family: var(--font-disp); font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -.01em; line-height: 1.2; }
-.result-card p { font-size: 12px; color: var(--text-mid); line-height: 1.75; }
-
-/* PROJECTS */
-.case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; width: 100%; max-width: var(--content-max); margin: 0 auto; background: var(--border); border: 1px solid var(--border); }
-.case-card { padding: 40px; display: flex; flex-direction: column; gap: 24px; }
-.case-card::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--grn), transparent); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
-.case-card:hover::after { transform: scaleX(1); }
-.case-card-feature {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: minmax(480px, 1.05fr) minmax(0, .95fr);
-  gap: 0;
-  padding: 0;
-}
-.case-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  min-width: 0;
-}
-.case-card-feature .case-content {
-  padding: 36px 40px;
-}
-.case-media {
-  margin-bottom: 18px;
-  border: 1px solid var(--border);
-  background:
-    radial-gradient(circle at top right, rgba(95,189,245,.12), transparent 32%),
-    linear-gradient(180deg, rgba(15,19,21,.95), rgba(8,9,10,.98));
-  padding: 14px;
-  position: relative;
-  overflow: hidden;
-}
-.case-card-feature .case-media {
-  margin-bottom: 0;
-  border: 0;
-  border-right: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: clamp(460px, 34vw, 640px);
-}
-.case-media-board {
-  background:
-    radial-gradient(circle at top right, rgba(95,189,245,.12), transparent 34%),
-    linear-gradient(180deg, rgba(15,19,21,.95), rgba(8,9,10,.98));
-}
-.case-media-plot {
-  background:
-    radial-gradient(circle at top right, rgba(95,189,245,.1), transparent 34%),
-    linear-gradient(180deg, rgba(17,19,20,.96), rgba(7,8,8,.99));
-}
-.case-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent, rgba(34,201,122,.04));
-  pointer-events: none;
-}
-.case-img {
-  width: 100%;
-  height: 240px;
-  object-fit: contain;
-  object-position: center;
-  filter: saturate(.92) brightness(.96);
-  transition: filter .25s ease, transform .25s ease;
-}
-.case-image-trigger {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  cursor: zoom-in;
-  position: relative;
-  z-index: 1;
-}
-.case-image-trigger:focus-visible {
-  outline: 1px solid var(--grn);
-  outline-offset: -5px;
-}
-.case-card-feature .case-img {
-  height: 100%;
-}
-.case-img-fill { object-fit: cover; }
-.case-img-plot { object-fit: contain; }
-.case-card:hover .case-img,
-.case-image-trigger:focus-visible .case-img {
-  filter: saturate(1) brightness(1);
-  transform: translateY(-2px);
-}
-.case-index { font-size: 10px; color: var(--text-dim); letter-spacing: .15em; text-transform: uppercase; }
-.case-title { font-family: var(--font-disp); font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.05; }
-.case-lede { font-size: 12.5px; color: var(--text-mid); line-height: 1.8; }
-.case-dl { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; border-top: 1px solid var(--border); padding-top: 22px; }
-.case-dl div { display: flex; flex-direction: column; gap: 6px; }
-.case-dl dt { font-size: 10px; color: var(--grn); letter-spacing: .15em; text-transform: uppercase; }
-.case-dl dd { font-size: 12px; color: var(--text-mid); line-height: 1.75; }
-.case-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 4px; }
-
-/* IMAGE VIEWER */
-.image-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 8000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 28px;
-  background: rgba(0,0,0,.88);
-  backdrop-filter: blur(10px);
-}
-.image-modal.open { display: flex; }
-.image-modal-frame {
-  position: relative;
-  width: min(94vw, 1800px);
-  max-height: 92vh;
-  border: 1px solid var(--border-hi);
-  background: #050505;
-  box-shadow: 0 30px 90px rgba(0,0,0,.55);
-}
-.image-modal-img {
-  width: 100%;
-  max-height: 92vh;
-  object-fit: contain;
-  padding: 16px;
-}
-.image-modal-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--border-hi);
-  background: rgba(7,7,7,.88);
-  color: var(--text);
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-}
-.image-modal-close:hover,
-.image-modal-close:focus-visible {
-  border-color: var(--grn);
-  color: var(--grn);
-  outline: none;
-}
-
-/* MORE WORK */
-.work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; width: 100%; max-width: var(--content-max); margin: 0 auto; background: var(--border); border: 1px solid var(--border); }
-.work-card { padding: 32px 28px; display: flex; flex-direction: column; gap: 12px; }
-.work-title { font-family: var(--font-disp); font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
-.work-desc { font-size: 12px; color: var(--text-mid); line-height: 1.8; flex: 1; }
-.work-desc strong { color: var(--text); font-weight: 500; }
-
-/* EXPERIENCE */
-.exp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; width: 100%; max-width: var(--content-max); margin: 0 auto; background: var(--border); border: 1px solid var(--border); }
-.exp-card { padding: 40px; display: flex; flex-direction: column; }
-.exp-img { width: 100%; height: 200px; object-fit: cover; margin-bottom: 28px; border: 1px solid var(--border); filter: saturate(.8) brightness(.9); transition: filter .3s; }
-.exp-card:hover .exp-img { filter: saturate(1) brightness(1); }
-.exp-company { font-size: 11px; color: var(--grn); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
-.exp-role { font-family: var(--font-disp); font-size: 28px; font-weight: 700; color: var(--text); line-height: 1.05; margin-bottom: 4px; }
-.exp-period { font-size: 10px; color: var(--text-dim); letter-spacing: .08em; margin-bottom: 16px; }
-.exp-summary { font-size: 12.5px; color: var(--text-mid); line-height: 1.8; margin-bottom: 20px; }
-.bullet-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.bullet-list li { font-size: 12.5px; color: var(--text-mid); line-height: 1.75; padding-left: 18px; position: relative; }
-.bullet-list li::before { content: "▸"; position: absolute; left: 0; color: var(--grn-dim); font-size: 9px; top: 4px; }
-.bullet-list li strong { color: var(--text); font-weight: 500; }
-
-/* CAPABILITIES */
-.cap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; width: 100%; max-width: var(--content-max); margin: 0 auto; background: var(--border); border: 1px solid var(--border); }
-.cap-card { padding: 40px 36px; display: flex; flex-direction: column; gap: 14px; }
-.cap-kicker { font-size: 10px; color: var(--grn); letter-spacing: .18em; text-transform: uppercase; }
-.cap-title { font-family: var(--font-disp); font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.15; }
-.cap-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-.cap-list li { font-size: 12.5px; color: var(--text-mid); line-height: 1.65; padding-left: 16px; position: relative; }
-.cap-list li::before { content: ""; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--grn-dim); }
-
-/* TAGS */
-.tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
-.tag,
-.tag.hi {
-  display: inline-flex;
-  align-items: center;
-  min-height: 22px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 4px 9px;
-  border: 1px solid rgba(34,201,122,.24);
-  color: #8fe6b6;
-  background: linear-gradient(180deg, rgba(34,201,122,.07), rgba(15,107,62,.10));
-  letter-spacing: .06em;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-}
-
-/* LINKS */
-.text-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10.5px; color: var(--grn); letter-spacing: .12em; text-transform: uppercase; text-decoration: none; transition: gap .2s; }
-.text-link:hover { gap: 10px; }
-.text-link::after { content: "→"; }
-.text-private { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); letter-spacing: .08em; text-transform: uppercase; }
-
-/* CONTACT */
-.contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; width: 100%; max-width: var(--content-max); margin: 0 auto; align-items: start; }
-.contact-sub { font-size: 13px; color: var(--text-mid); line-height: 1.9; margin-top: 16px; }
-.contact-right { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
-.contact-link { background: var(--bg-card); padding: 22px 28px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; transition: background .2s; cursor: crosshair; }
-.contact-link:hover { background: var(--bg-raised); }
-.contact-label { font-size: 10px; color: var(--text-dim); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 5px; }
-.contact-val { font-size: 13.5px; color: var(--text); }
-.contact-arrow { font-size: 16px; color: var(--grn); opacity: 0; transition: opacity .2s, transform .2s; transform: translateX(-6px); }
-.contact-link:hover .contact-arrow { opacity: 1; transform: translateX(0); }
-
-/* FOOTER */
-footer { width: 100%; max-width: var(--content-max); margin: 0 auto; padding: 22px 48px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
-footer p { font-size: 10px; color: var(--text-dim); letter-spacing: .08em; }
-footer span { color: var(--grn); }
-
-/* REVEAL */
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .results-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 960px) {
-  nav { padding: 0 24px; }
-  nav ul { gap: 16px; }
-  #hero { padding: 100px 24px 42px; }
-  .terminal-body { grid-template-columns: 1fr; }
-  .hero-left { padding: 32px 28px; }
-  .hero-readout { width: 100%; padding: 24px 28px 28px; border-left: 0; border-top: 1px solid var(--border); }
-  section { padding: 64px 24px; }
-  .case-grid, .exp-grid, .contact-inner { grid-template-columns: 1fr; }
-  .case-card-feature { grid-template-columns: 1fr; }
-  .case-card-feature .case-media { border-right: 0; border-bottom: 1px solid var(--border); height: auto; }
-  .case-card-feature .case-media-board { aspect-ratio: 1.25; }
-  .case-card-feature .case-media-plot { aspect-ratio: 1.6; }
-  .case-card-feature .case-content { padding: 32px 28px; }
-  .cap-grid { grid-template-columns: 1fr; }
-  .exp-card-featured { grid-column: 1 !important; }
-}
-@media (max-width: 720px) {
-  nav ul { display: none; }
-  .work-grid { grid-template-columns: 1fr 1fr; }
-  .case-dl { grid-template-columns: 1fr; }
-  .case-card-feature .case-dl { grid-template-columns: 1fr; }
-}
-@media (max-width: 480px) {
-  .work-grid, .results-grid { grid-template-columns: 1fr; }
-  .image-modal { padding: 12px; }
-  .image-modal-img { padding: 8px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  .reveal, .status-line { opacity: 1 !important; transform: none !important; }
-}
-</style>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
 </head>
 <body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#0A0C0F;color:#E9ECF1;font-family:'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#E9ECF1}a:hover{color:#FFFFFF}
+:focus-visible{outline:2px solid #E9ECF1;outline-offset:3px}
+h1,h2,h3,h4,p{margin:0}
+section{scroll-margin-top:72px}
+strong{font-weight:600;color:#FFFFFF}
+sub{font-size:.72em}
+.wrap{max-width:1280px;margin:0 auto;padding-left:clamp(20px,4.5vw,64px);padding-right:clamp(20px,4.5vw,64px)}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#98A2B0}
+.chip{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;color:#B7C0CC;border:1px solid #2F3641;border-radius:2px;padding:5px 9px;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;min-height:46px;padding:0 20px;border:1px solid #39414D;border-radius:2px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.04em;text-decoration:none;background:rgba(10,12,15,.6);transition:border-color .15s}
+.btn:hover{border-color:#E9ECF1}
+.navl{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:#B7C0CC}
+.h2{font-family:'Archivo',sans-serif;font-stretch:125%;font-weight:800;font-size:clamp(36px,5.4vw,72px);line-height:.94;text-transform:uppercase}
+.h3{font-size:clamp(24px,2.6vw,32px);font-weight:600;line-height:1.15}
+.role{font-size:20px;font-weight:500;line-height:1.3;color:#E9ECF1}
+.lead{font-size:17px;line-height:1.6;color:#C5CCD6;max-width:34em}
+.body{font-size:15px;line-height:1.65;color:#A9B2BF;max-width:38em}
+.num{font-family:'Archivo',sans-serif;font-stretch:112%;font-weight:700;font-size:clamp(40px,4.6vw,64px);line-height:1}
+.item{display:flex;flex-wrap:wrap;gap:6px 28px;padding:20px 0;border-top:1px solid #2A303A}
+.item h4{flex:1 1 200px;font-size:16px;font-weight:600;line-height:1.35}
+.item p{flex:2.4 1 320px;font-size:15px;line-height:1.6;color:#A9B2BF}
+.eq{border-top:1px solid #2A303A;border-bottom:1px solid #2A303A;padding:14px 0;display:flex;flex-direction:column;gap:7px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13.5px;line-height:1.5;color:#D3D9E1;overflow-x:auto;white-space:nowrap}
+.eq span{color:#98A2B0}
+.idx{flex:1 1 230px;min-width:0;display:flex;flex-direction:column;gap:6px;padding:14px 0 6px;border-top:1px solid #39414D;text-decoration:none;min-height:44px}
+.idx:hover .t{text-decoration:underline;text-underline-offset:4px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;border-top:1px solid #2A303A;text-decoration:none}
+.row:hover span:last-child{text-decoration:underline;text-underline-offset:4px}
+.spec{display:flex;flex-wrap:wrap;gap:4px 20px;padding:12px 0;border-top:1px solid #2A303A;font-size:15px;line-height:1.5;color:#C5CCD6}
+.spec .mono{flex:0 0 110px;padding-top:3px}
+.spec div:last-child{flex:1 1 200px}
+</style>
+</helmet>
+<div style="position: relative; background: #0A0C0F; color: #E9ECF1">
 
-<!-- BOOT -->
-<div id="boot">
-  <div id="boot-terminal">
-    <div class="boot-line c-dim">PORTFOLIO INIT SEQUENCE v0.1</div>
-    <div class="boot-line c-dim">--------------------------------------------</div>
-    <div class="boot-line c-grn">[ OK ] CAN-FD bus initialized</div>
-    <div class="boot-line c-grn">[ OK ] IMU calibration complete &mdash; sigma = 0.002 rad/s</div>
-    <div class="boot-line c-grn">[ OK ] Body velocity EKF online</div>
-    <div class="boot-line c-grn">[ OK ] Torque vectoring active</div>
-    <div class="boot-line c-dim">&nbsp;</div>
-    <div class="boot-line c-wht">IDENTITY &rarr; ADITYA DHIMAN</div>
-    <div class="boot-line c-wht">ROLE &rarr; EMBEDDED SYSTEMS ENGINEER</div>
-    <div class="boot-line c-wht">STATUS &rarr; INTERNING AT TESLA &mdash; AI PLATFORM</div>
-    <div class="boot-line c-dim">&nbsp;</div>
-    <div class="boot-line c-grn">MOUNTING PORTFOLIO... <span id="boot-cursor"></span></div>
-  </div>
-  <div class="boot-hint" id="boot-hint">scroll to continue</div>
+<!-- Background stage: one point cloud that re-forms as the page scrolls -->
+<div style="position: sticky; top: 0; height: min(100vh, 1200px); margin-bottom: calc(-1 * min(100vh, 1200px)); pointer-events: none; z-index: 0">
+<canvas data-bg="1" aria-hidden="true" style="display: block; width: 100%; height: 100%"></canvas>
+<div class="mono" style="position: absolute; right: clamp(20px, 4.5vw, 64px); bottom: 18px; max-width: 440px; text-align: right; font-size: 11px; line-height: 1.5">{{ cap }}</div>
 </div>
 
-<div id="main">
-
-<nav>
-  <div class="nav-id">AD</div>
-  <ul>
-    <li><a href="#results">RESULTS</a></li>
-    <li><a href="#experience">EXP</a></li>
-    <li><a href="#projects">FEATURED WORK</a></li>
-    <li><a href="#capabilities">CAPABILITIES</a></li>
-    <li><a href="#morework">MORE WORK</a></li>
-    <li><a href="#contact">CONTACT</a></li>
-  </ul>
+<nav aria-label="Primary" style="position: sticky; top: 0; z-index: 3; background: rgba(10, 12, 15, .84); backdrop-filter: blur(8px); border-bottom: 1px solid #1D222A">
+<div class="wrap" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 24px; padding-top: 6px; padding-bottom: 6px">
+<a href="#top" style="font-family: 'Archivo', sans-serif; font-stretch: 125%; font-weight: 800; font-size: 17px; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center">AD<span style="color: {{accent}}">.</span></a>
+<div style="display: flex; flex-wrap: wrap; align-items: center; margin-left: -12px">
+<a class="navl" href="#tesla">Tesla</a>
+<a class="navl" href="#formula">Formula Electric</a>
+<a class="navl" href="#rivian">Rivian × VW</a>
+<a class="navl" href="#contact">Contact</a>
+</div>
+</div>
 </nav>
 
+<main style="position: relative; z-index: 1">
+
 <!-- HERO -->
-<section id="hero">
-  <div class="hero-terminal reveal">
-    <div class="terminal-bar">
-      <span class="terminal-bar-label">aditya.dhiman: ~/portfolio</span>
-      <div class="readout-lights">
-        <div class="readout-light"></div>
-        <div class="readout-light alt"></div>
-        <div class="readout-light on"></div>
-      </div>
-    </div>
-    <div class="terminal-body">
-      <div class="hero-left">
-        <div class="hero-tag"><span class="status-dot"></span>Embedded Systems &middot; Vehicle Controls &middot; Real-time Firmware</div>
-        <h1>ADITYA<br><span class="accent">DHIMAN</span></h1>
-        <p class="hero-sub">I build <strong>embedded systems</strong> — from <strong>Linux-based</strong> production tooling to <strong>RTOS firmware</strong> and real-time <strong>vehicle controls</strong>.</p>
-        <div class="hero-links">
-          <a href="#projects" class="btn btn-primary">View My Work</a>
-          <a href="https://www.linkedin.com/in/adityadhiman18/" target="_blank" class="btn btn-ghost">LinkedIn &#8599;</a>
-          <a href="Aditya_Dhiman_Resume.pdf" target="_blank" download class="btn btn-ghost">Resume &#8599;</a>
-          <a href="https://github.com/Aditya-Dhiman4" target="_blank" class="btn btn-ghost">GitHub &#8599;</a>
-        </div>
-      </div>
-
-      <div class="hero-readout">
-        <div class="readout-body">
-          <p class="readout-cmd"><span class="prompt">$</span> cat system_summary.log</p>
-          <div class="readout-row">
-            <span class="readout-key">role</span>
-            <span class="readout-val">UBC Computer Engineering</span>
-          </div>
-          <div class="readout-row">
-            <span class="readout-key">focus</span>
-            <span class="readout-val">RTOS firmware, embedded Linux, vehicle controls</span>
-          </div>
-          <div class="readout-row">
-            <span class="readout-key">teams</span>
-            <span class="readout-val">Tesla AI Platform &bull; RV Tech (Rivian &times; VWGT) &bull; Formula Electric</span>
-          </div>
-          <div class="readout-row">
-            <span class="readout-key">status</span>
-            <span class="readout-val" style="color:var(--grn)">Interning at Tesla &mdash; AI Platform</span>
-          </div>
-          <div class="readout-divider"></div>
-          <div class="status-lines">
-            <div class="status-line" data-sl>[ ok ] embedded_linux profile loaded</div>
-            <div class="status-line" data-sl>[ ok ] freertos_firmware stack ready</div>
-            <div class="status-line" data-sl>[ ok ] controls_estimation online</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- oscilloscope trace -->
-<div class="trace-container" aria-hidden="true">
-  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" fill="none">
-    <polyline points="0,20 60,20 70,5 80,35 90,20 200,20 210,5 220,35 230,5 240,35 250,20 360,20 370,8 385,32 400,20 500,20 510,5 520,35 530,20 640,20 650,8 660,32 680,8 700,20 800,20 810,5 820,35 830,20 940,20 950,5 960,35 970,5 980,35 990,20 1100,20 1110,8 1120,32 1140,8 1160,20 1200,20" stroke="#22C97A" stroke-width="1.2" opacity="0.35"/>
-  </svg>
+<section id="top" data-scene="plane" data-dim="1">
+<div class="wrap" style="min-height: min(100vh, 860px); box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; gap: 56px; padding-top: 72px; padding-bottom: 40px">
+<div style="display: flex; flex-direction: column; gap: 26px">
+<div class="mono" style="color: {{accent}}">Embedded systems · Vehicle controls · Real-time firmware</div>
+<h1 style="font-family: 'Archivo', sans-serif; font-stretch: 112%; font-weight: 800; font-size: clamp(40px, 8.6vw, 128px); line-height: .9; letter-spacing: -.015em; text-transform: uppercase">Aditya Dhiman</h1>
+<p style="font-size: clamp(18px, 1.6vw, 21px); line-height: 1.5; color: #C5CCD6; max-width: 33em">Computer Engineering student at UBC. I build <strong>embedded systems</strong> — from Linux-based production tooling to <strong>RTOS firmware</strong> and real-time <strong>vehicle controls</strong>.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<a class="btn" href="https://aditya-dhiman4.github.io/Aditya_Dhiman_Resume.pdf" style="background: {{accent}}; border-color: {{accent}}; color: #0A0C0F; font-weight: 500">Resume ↗</a>
+<a class="btn" href="https://www.linkedin.com/in/adityadhiman18/">LinkedIn ↗</a>
+<a class="btn" href="https://github.com/Aditya-Dhiman4">GitHub ↗</a>
 </div>
-
-<!-- 01 RESULTS -->
-<section id="results">
-  <div class="section-header reveal"><span class="section-num">01 //</span><h2>IMPACT</h2><div class="section-rule"></div></div>
-  <p class="section-copy reveal">Representative outcomes across production embedded systems, Formula Electric firmware, and autonomy work.</p>
-  <div class="results-grid">
-    <div class="card result-card reveal">
-      <div class="result-metric">200+</div>
-      <h3>Developers Supported</h3>
-      <p>Replaced a fragile embedded Linux flashing flow with a GPT partitioning tool, adopted across a large ECU development group at RV Tech.</p>
-    </div>
-    <div class="card result-card reveal">
-      <div class="result-metric">3&times;</div>
-      <h3>Lower Trig Compute</h3>
-      <p>Used the STM32H7 CORDIC accelerator to cut math overhead in the vehicle firmware path that feeds the torque-vectoring control loop.</p>
-    </div>
-    <div class="card result-card reveal">
-      <div class="result-metric">&lt;10</div>
-      <h3>km/h Velocity Estimation</h3>
-      <p>Built a low-speed EKF where wheel-speed feedback becomes unreliable due to slip and launch &mdash; enabling usable body velocity in the hardest operating window.</p>
-    </div>
-  </div>
-</section>
-
-<!-- 02 EXPERIENCE -->
-<section id="experience">
-  <div class="section-header reveal"><span class="section-num">02 //</span><h2>EXPERIENCE</h2><div class="section-rule"></div></div>
-  <div class="exp-grid">
-
-    <!-- Tesla — spans full width as current role -->
-    <div class="card exp-card reveal" style="grid-column: 1 / -1;">
-      <img src="teslacybercab.png" alt="Tesla Cybercab" class="exp-img" style="object-position:center 50%">
-      <div class="exp-company">Tesla</div>
-      <div class="exp-role">Embedded Software<br>Engineer Intern &mdash; AI Platform</div>
-      <div class="exp-period">JUNE 2026 &mdash; PRESENT // Palo Alto, CA</div>
-      <p class="exp-summary">Bare-metal firmware development and production fleet reliability work on Tesla&rsquo;s Autopilot compute hardware.</p>
-      <ul class="bullet-list">
-        <li>Developing and improving real-time <strong>bare-metal firmware</strong> for Autopilot compute hardware in <strong>C/C++</strong>, working at the hardware-software interface to optimize system behavior and reliability</li>
-        <li>Triaging <strong>MCU reset causes</strong> across production vehicle fleets by analyzing <strong>CAN bus logs</strong> and real-time <strong>embedded diagnostic logs</strong> from the MCU; identifying root causes and resolving firmware bugs to improve vehicle reliability and Autopilot safety</li>
-      </ul>
-      <div class="tag-row"><span class="tag hi">Bare-Metal C/C++</span><span class="tag hi">Autopilot Hardware</span><span class="tag hi">CAN Bus</span><span class="tag">Embedded Diagnostics</span><span class="tag">Production Fleet</span></div>
-    </div>
-
-    <div class="card exp-card reveal">
-      <img src="rivianr1t.png" alt="Rivian R1T" class="exp-img" style="object-position:center 70%">
-      <div class="exp-company">Rivian &times; Volkswagen Group Technologies</div>
-      <div class="exp-role">Embedded Software<br>Engineer Intern</div>
-      <div class="exp-period">SEPT 2025 &mdash; APRIL 2026 // Vancouver, BC</div>
-      <p class="exp-summary">Production embedded systems work spanning Linux tooling, diagnostics, developer infrastructure, and resilient logging for next-generation ECUs.</p>
-      <ul class="bullet-list">
-        <li>Implemented an <strong>Ethernet switch manager</strong> for next-gen ECUs handling link status, thermal monitoring, and OBD diagnostics over RMU &mdash; shipped to production firmware</li>
-        <li>Architected a <strong>multithreaded gRPC server in C++</strong> streaming live Ethernet switch diagnostics with bidirectional protobuf comms</li>
-        <li>Built a <strong>GPT partitioning tool</strong> for embedded Linux images, replacing a flaky legacy flash flow now adopted by 200+ developers</li>
-        <li>Designed a <strong>crash-resilient logging framework</strong> with persistent UFS storage and cloud upload post power-cycle</li>
-        <li>Maintaining <strong>Yocto/BitBake embedded Linux builds</strong> for current and next-gen Infotainment ECUs</li>
-      </ul>
-      <div class="tag-row"><span class="tag hi">Embedded Linux</span><span class="tag hi">Yocto / BitBake</span><span class="tag hi">C++</span><span class="tag hi">gRPC</span><span class="tag">Protobuf</span><span class="tag">OBD-II</span></div>
-    </div>
-
-    <div class="card exp-card reveal">
-      <img src="car.png" alt="UBC Formula Electric car at competition" class="exp-img" style="object-position:center 50%">
-      <div class="exp-company">UBC Formula Electric &mdash; FSAE</div>
-      <div class="exp-role">Vehicle Controls<br>Firmware Developer</div>
-      <div class="exp-period">SEPT 2024 &mdash; PRESENT // Vancouver, BC</div>
-      <p class="exp-summary">Real-time firmware and controls development for a Formula SAE electric racecar using custom hardware and a shared embedded software stack.</p>
-      <ul class="bullet-list">
-        <li>Real-time firmware on <strong>custom STM32H5/H7 boards</strong> &mdash; FreeRTOS tasks, CAN-FD, SPI, I2C, UART, ADC/GPIO with GoogleTest coverage</li>
-        <li>Designed a <strong>hardware-agnostic eFuse driver</strong> with DMA-based current sensing, fault handling, and retry logic</li>
-        <li><strong>CORDIC accelerator driver</strong> cutting trig CPU cycles 3&times; &mdash; directly reducing torque vectoring loop latency</li>
-        <li><strong>Yaw Rate Controller</strong> (PID + load-transfer torque allocation) &mdash; modeled in Simulink, deployed in C, validated on car</li>
-        <li>Built an <strong>Extended Kalman Filter</strong> fusing IMU, wheel speed, GPS, and slip detection for sub-10 km/h velocity estimation</li>
-      </ul>
-      <div class="tag-row"><span class="tag hi">STM32H5/H7</span><span class="tag hi">FreeRTOS</span><span class="tag hi">CAN-FD</span><span class="tag">SPI / I2C</span><span class="tag">Simulink</span><span class="tag">GoogleTest</span></div>
-      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link" style="margin-top:12px">View Repository</a>
-    </div>
-
-  </div>
-</section>
-
-<!-- 03 FEATURED ENGINEERING WORK -->
-<section id="projects">
-  <div class="section-header reveal"><span class="section-num">03 //</span><h2>FEATURED ENGINEERING WORK</h2><div class="section-rule"></div></div>
-  <p class="section-copy reveal">Front-facing engineering work with enough depth to discuss design choices, tradeoffs, validation, and impact.</p>
-  <div class="case-grid">
-
-    <div class="card case-card case-card-feature reveal">
-      <div class="case-media case-media-board">
-        <button class="case-image-trigger" type="button" data-full="vc.png" data-title="Formula Electric Device Drivers" aria-label="Open Formula Electric Device Drivers image">
-          <img class="case-img case-img-fill" src="vc.png" alt="UBC Formula Electric vehicle controller board used for device-driver and firmware development.">
-        </button>
-      </div>
-      <div class="case-content">
-        <div>
-          <div class="case-index">// Project 01</div>
-          <div class="case-title">Formula Electric Device Drivers</div>
-          <p class="case-lede" style="margin-top:10px">Board-level firmware and shared driver architecture underpinning controls, sensing, and power distribution across the car.</p>
-        </div>
-        <dl class="case-dl">
-          <div><dt>Problem</dt><dd>Higher-level vehicle controls are only as reliable as the low-level driver layer that powers sensors, buses, and fault handling.</dd></div>
-          <div><dt>What I Built</dt><dd>Driver work spanning eFuse power control with DMA-based current sensing, IMU acquisition over SPI, CORDIC hardware acceleration, and CAN-FD messaging under FreeRTOS.</dd></div>
-          <div><dt>Technical Challenge</dt><dd>Keeping firmware hardware-agnostic across boards while handling asynchronous ADC/DMA timing, retry logic, and tight compute budgets on STM32 MCUs.</dd></div>
-          <div><dt>Result</dt><dd>3&times; reduction in trig CPU cost for control math, improved startup robustness, and a cleaner shared firmware base for new board bring-up.</dd></div>
-        </dl>
-        <div class="case-footer">
-          <div class="tag-row" style="margin-top:0"><span class="tag hi">C / C++</span><span class="tag hi">STM32H5/H7</span><span class="tag hi">FreeRTOS</span><span class="tag">CAN-FD</span><span class="tag">ADC / DMA</span></div>
-          <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="card case-card case-card-feature reveal">
-      <div class="case-media case-media-plot">
-        <button class="case-image-trigger" type="button" data-full="body_vel_ekf_results.png" data-title="Body Velocity Extended Kalman Filter" aria-label="Open Body Velocity EKF results image">
-          <img class="case-img case-img-plot" src="body_vel_ekf_results.png" alt="Body velocity EKF estimation results plotted against vehicle data.">
-        </button>
-      </div>
-      <div class="case-content">
-        <div>
-          <div class="case-index">// Project 02</div>
-          <div class="case-title">Body Velocity Extended Kalman Filter</div>
-          <p class="case-lede" style="margin-top:10px">Low-speed state estimation for a Formula Electric car where tire slip makes wheel-speed-derived velocity unreliable.</p>
-        </div>
-        <dl class="case-dl">
-          <div><dt>Problem</dt><dd>Launch, braking, and low-speed cornering create operating points where the control stack still needs body velocity, but raw wheel speed is not trustworthy.</dd></div>
-          <div><dt>What I Built</dt><dd>A low-speed EKF in C++ and Simulink fusing IMU, wheel speed, GPS, and slip ratio gating for cleaner state estimates.</dd></div>
-          <div><dt>Technical Challenge</dt><dd>Balancing estimator responsiveness against noisy or corrupted inputs while handling nonlinear measurement models and Jacobian derivation under real-time constraints.</dd></div>
-          <div><dt>Result</dt><dd>Usable velocity estimates below 10 km/h and a stronger foundation for the torque-vectoring and yaw-rate control stack deployed on car.</dd></div>
-        </dl>
-        <div class="case-footer">
-          <div class="tag-row" style="margin-top:0"><span class="tag hi">C++</span><span class="tag hi">Simulink</span><span class="tag">EKF</span><span class="tag">GPS / IMU Fusion</span><span class="tag">State Estimation</span></div>
-          <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="card case-card reveal">
-      <div>
-        <div class="case-index">// Project 03</div>
-        <div class="case-title">Yaw Rate Controller &amp; Torque Vectoring</div>
-        <p class="case-lede" style="margin-top:10px">Real-time vehicle-dynamics control work aimed at making torque allocation responsive and stable across the full operating envelope.</p>
-      </div>
-      <dl class="case-dl">
-        <div><dt>Problem</dt><dd>Controlling a Quad Motor over-actuated system requires control logic that stays reliable across load transfer, sensor noise, and hard real-time firmware constraints.</dd></div>
-        <div><dt>What I Built</dt><dd>A PID-based yaw-rate controller and load-transfer-aware torque allocator modeled in Simulink and deployed into embedded C for the Formula Electric vehicle.</dd></div>
-        <div><dt>Technical Challenge</dt><dd>Bridging controller design from simulation into deterministic firmware while keeping the loop fast enough for on-car validation without a hardware-in-the-loop rig.</dd></div>
-        <div><dt>Result</dt><dd>Integrated controller validated alongside the EKF estimator and driver layer; forms the real-time controls backbone currently running on the car.</dd></div>
-      </dl>
-      <div class="case-footer">
-        <div class="tag-row" style="margin-top:0"><span class="tag hi">C</span><span class="tag hi">Simulink</span><span class="tag">PID</span><span class="tag">Torque Vectoring</span><span class="tag">Vehicle Dynamics</span></div>
-        <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
-      </div>
-    </div>
-
-    <div class="card case-card reveal">
-      <div>
-        <div class="case-index">// Project 04</div>
-        <div class="case-title">Production Embedded Linux &mdash; RV Tech</div>
-        <p class="case-lede" style="margin-top:10px">Embedded Linux tooling and diagnostics for production automotive programs and shared developer workflows at Rivian &times; VWGT.</p>
-      </div>
-      <dl class="case-dl">
-        <div><dt>Problem</dt><dd>Production ECU teams need reliable diagnostics, image tooling, and post-failure logging to keep shared development flows stable across large engineering groups.</dd></div>
-        <div><dt>What I Built</dt><dd>Linux-side tooling spanning Ethernet switch diagnostics, a multithreaded C++ gRPC service, GPT partitioning utilities, and a crash-resilient logging framework.</dd></div>
-        <div><dt>Technical Challenge</dt><dd>Designing systems that survive power cycles, fit Yocto-based production environments, and integrate cleanly with OBD diagnostics workflows across multiple teams.</dd></div>
-        <div><dt>Result</dt><dd>Replaced a flaky flashing path used by 200+ developers; logging and diagnostics tooling shipped across infotainment, connectivity, and diagnostics teams.</dd></div>
-      </dl>
-      <div class="case-footer">
-        <div class="tag-row" style="margin-top:0"><span class="tag hi">Embedded Linux</span><span class="tag hi">Yocto / BitBake</span><span class="tag hi">C++</span><span class="tag">gRPC</span><span class="tag">Protobuf</span></div>
-        <a href="Aditya_Dhiman_Resume.pdf" target="_blank" class="text-link">Resume PDF</a>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- 04 TECHNICAL CAPABILITIES -->
-<section id="capabilities">
-  <div class="section-header reveal"><span class="section-num">04 //</span><h2>TECHNICAL CAPABILITIES</h2><div class="section-rule"></div></div>
-  <p class="section-copy reveal">The technical areas where I have the strongest hands-on depth today.</p>
-  <div class="cap-grid">
-
-    <div class="card cap-card reveal">
-      <div class="cap-kicker">Real-Time Firmware</div>
-      <div class="cap-title">Microcontroller firmware with deterministic behavior and hardware-facing rigor</div>
-      <ul class="cap-list">
-        <li>C / C++ on STM32F4 and STM32H7 &mdash; device drivers, peripheral bring-up, and board-level validation</li>
-        <li>FreeRTOS task architecture, interrupt handling, scheduling, and shared-resource patterns</li>
-        <li>CAN-FD, SPI, I2C, UART, ADC, GPIO, DMA &mdash; including async acquisition and fault handling</li>
-        <li>GoogleTest unit coverage and JTAG debugging workflows</li>
-      </ul>
-    </div>
-
-    <div class="card cap-card reveal">
-      <div class="cap-kicker">Embedded Linux &amp; Production Systems</div>
-      <div class="cap-title">Tooling and diagnostics for Linux-based automotive environments</div>
-      <ul class="cap-list">
-        <li>Yocto / BitBake image maintenance and embedded Linux build workflows</li>
-        <li>C++ services with gRPC and Protobuf for diagnostics and real-time streaming</li>
-        <li>GPT image partitioning, flash tooling, persistent logging, and post-cycle recovery</li>
-        <li>OBD-II integration and ECU diagnostics across infotainment and connectivity stacks</li>
-      </ul>
-    </div>
-
-    <div class="card cap-card reveal">
-      <div class="cap-kicker">Vehicle Controls &amp; State Estimation</div>
-      <div class="cap-title">Controls and estimation for real-time vehicle behavior, simulation, and on-car validation</div>
-      <ul class="cap-list">
-        <li>EKF-based body velocity estimation fusing IMU, wheel speed, GPS, and slip logic</li>
-        <li>Yaw-rate control, torque vectoring, and load-transfer-aware torque allocation</li>
-        <li>MATLAB / Simulink modeling and embedded C deployment with on-car validation</li>
-        <li>Innovation gating, adaptive noise covariance, and Jacobian derivation</li>
-      </ul>
-    </div>
-
-    <div class="card cap-card reveal">
-      <div class="cap-kicker">Robotics &amp; Autonomy</div>
-      <div class="cap-title">Autonomy work spanning perception, simulation, planning, and deployment</div>
-      <ul class="cap-list">
-        <li>ROS2 node architecture, F1Tenth deployment, and sim-to-real experimentation</li>
-        <li>CNN-based track-point detection from labeled camera frames</li>
-        <li>Reinforcement learning (PPO) policy training and LiDAR path planning</li>
-        <li>Physical robot deployment, testing, and performance validation</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
-<!-- 05 MORE ENGINEERING WORK -->
-<section id="morework">
-  <div class="section-header reveal"><span class="section-num">05 //</span><h2>MORE ENGINEERING WORK</h2><div class="section-rule"></div></div>
-  <p class="section-copy reveal">Additional engineering work across embedded firmware, autonomy, hardware design, and engineering tooling.</p>
-  <div class="work-grid">
-
-    <div class="card work-card reveal">
-      <div class="work-title">eFuse Driver Architecture</div>
-      <p class="work-desc">Shared, <strong>hardware-agnostic eFuse driver</strong> for Formula Electric custom boards &mdash; sense-line fault detection, async ADC acquisition via DMA for current sensing, retry logic, and power state management.</p>
-      <div class="tag-row"><span class="tag hi">C / C++</span><span class="tag hi">STM32</span><span class="tag">ADC / DMA</span><span class="tag">Fault Handling</span></div>
-      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
-    </div>
-
-    <div class="card work-card reveal">
-      <div class="work-title">CORDIC Accelerator Driver</div>
-      <p class="work-desc">Developed a <strong>CORDIC hardware driver</strong> on STM32H7, replacing software trig in the torque-vectoring firmware path. Required careful Q1.31 fixed-point handling and phase inversion debugging to achieve correct results.</p>
-      <div class="tag-row"><span class="tag hi">C</span><span class="tag hi">STM32H7</span><span class="tag">CORDIC</span><span class="tag">Fixed-Point</span></div>
-      <a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" target="_blank" class="text-link">Firmware repo</a>
-    </div>
-
-    <div class="card work-card reveal">
-      <div class="work-title">F1Tenth Autonomous Car</div>
-      <p class="work-desc">Trained a <strong>PPO RL policy</strong> for 10M+ timesteps and deployed to a physical F1Tenth robot via ROS2, cutting lap time 50% with zero collisions across 30+ runs. Built a <strong>CNN-based track-point detector</strong> from 5000+ labeled camera frames.</p>
-      <div class="tag-row"><span class="tag hi">Python</span><span class="tag hi">C++</span><span class="tag">ROS2</span><span class="tag">PyTorch</span><span class="tag">Reinforcement Learning</span></div>
-      <span class="text-private">&#128274; Private &mdash; demo available</span>
-    </div>
-
-    <div class="card work-card reveal">
-      <div class="work-title">16-bit ARM CPU on FPGA</div>
-      <p class="work-desc">Designed a <strong>16-bit ARM-inspired CPU</strong> from scratch in Verilog &mdash; full datapath including ALU, register file, control unit, and memory interface, synthesized and validated on FPGA hardware with a suite of assembly test programs.</p>
-      <div class="tag-row"><span class="tag hi">Verilog</span><span class="tag hi">FPGA</span><span class="tag">ARM Architecture</span><span class="tag">Digital Design</span></div>
-      <span class="text-private">&#128274; Private &mdash; demo available</span>
-    </div>
-
-  </div>
-</section>
-
-<!-- 06 CONTACT -->
-<section id="contact">
-  <div class="contact-inner">
-    <div class="reveal">
-      <h2 style="font-family:var(--font-disp);font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-.02em">CONTACT ME</h2>
-      <p class="contact-sub">
-        Currently pursuing Computer Engineering at UBC.<br>
-        Currently interning at Tesla &mdash; AI Platform, Palo Alto.<br><br>
-        Interested in embedded software, controls, firmware, and production systems roles where reliability and systems thinking matter.
-      </p>
-    </div>
-    <div class="contact-right reveal">
-      <a class="contact-link" id="email-link" href="#">
-        <div><div class="contact-label">Email</div><div class="contact-val" id="email-val">loading...</div></div>
-        <div class="contact-arrow">&#8594;</div>
-      </a>
-      <a href="https://www.linkedin.com/in/adityadhiman18/" target="_blank" class="contact-link">
-        <div><div class="contact-label">LinkedIn</div><div class="contact-val">linkedin.com/in/adityadhiman18</div></div>
-        <div class="contact-arrow">&#8599;</div>
-      </a>
-      <a href="https://github.com/Aditya-Dhiman4" target="_blank" class="contact-link">
-        <div><div class="contact-label">GitHub</div><div class="contact-val">github.com/Aditya-Dhiman4</div></div>
-        <div class="contact-arrow">&#8599;</div>
-      </a>
-      <a href="Aditya_Dhiman_Resume.pdf" target="_blank" class="contact-link">
-        <div><div class="contact-label">Resume</div><div class="contact-val">Aditya_Dhiman_Resume.pdf</div></div>
-        <div class="contact-arrow">&#8599;</div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p>ADITYA DHIMAN // EMBEDDED SYSTEMS // UBC</p>
-  <p>Plain HTML &amp; CSS // <span id="yr"></span></p>
-</footer>
-
 </div>
-
-<div class="image-modal" id="image-modal" role="dialog" aria-modal="true" aria-label="Expanded project image">
-  <div class="image-modal-frame">
-    <button class="image-modal-close" type="button" aria-label="Close expanded image">&times;</button>
-    <img class="image-modal-img" id="image-modal-img" alt="">
-  </div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px 40px">
+<a class="idx" href="#tesla"><span class="mono">01 · Jun – Sep 2026</span><span class="t" style="font-size: 22px; font-weight: 600">Tesla</span><span style="font-size: 15px; color: #A9B2BF">Autopilot firmware on the AI4 computer</span></a>
+<a class="idx" href="#formula"><span class="mono">02 · Sep 2024 – Present</span><span class="t" style="font-size: 22px; font-weight: 600">UBC Formula Electric</span><span style="font-size: 15px; color: #A9B2BF">Vehicle Controls Lead, quad-motor torque vectoring</span></a>
+<a class="idx" href="#rivian"><span class="mono">03 · Sep 2025 – Apr 2026</span><span class="t" style="font-size: 22px; font-weight: 600">Rivian × VW Group Technologies</span><span style="font-size: 15px; color: #A9B2BF">Infotainment platform, embedded Linux</span></a>
 </div>
+</div>
+</section>
 
-<script>
-(function(){
-  var a = "aditya16dhiman" + "@" + "gmail.com";
-  document.getElementById("email-link").href = "mailto:" + a;
-  document.getElementById("email-val").textContent = a;
-})();
-document.getElementById("yr").textContent = new Date().getFullYear();
+<!-- TESLA -->
+<section id="tesla" data-scene="road" data-dim="1" style="border-top: 1px solid #1D222A">
+<div class="wrap" style="display: flex; flex-direction: column; gap: 48px; padding-top: 96px; padding-bottom: 96px">
+<div style="max-width: 540px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div class="mono">01 · Jun 2026 – Sep 2026 · Palo Alto, CA</div>
+<h2 class="h2">Tesla</h2>
+<div class="role">Autopilot Embedded Software Engineer Intern</div>
+<p class="lead">Firmware in C for the AI4 Autopilot computer. I root-caused watchdog, data abort, and power fault resets from fleet CAN and on-target logs, then shipped the fixes.</p>
+<div style="display: flex; flex-direction: column; padding-top: 12px">
+<div style="display: flex; align-items: baseline; gap: 20px; padding: 18px 0; border-top: 1px solid #2A303A"><div class="num" style="color: {{accent}}; flex: 0 0 auto; min-width: 2.6em">2×</div><div class="mono">Fleet MCU stability</div></div>
+<div style="display: flex; align-items: baseline; gap: 20px; padding: 18px 0; border-top: 1px solid #2A303A"><div class="num" style="flex: 0 0 auto; min-width: 2.6em">0</div><div class="mono">Occurrences of a program's top reset cause after the fix</div></div>
+<div style="display: flex; align-items: baseline; gap: 20px; padding: 18px 0; border-top: 1px solid #2A303A; border-bottom: 1px solid #2A303A"><div class="num" style="flex: 0 0 auto; min-width: 2.6em">M+</div><div class="mono">Millions of vehicles received the fixes</div></div>
+</div>
+</div>
+<div style="max-width: 540px; min-width: 0; border-bottom: 1px solid #2A303A">
+<div class="item"><h4>Top-ranked reset cause</h4><p>Power faults were mis-attributed as data aborts. I gated a DDR error ISR that aborted before the pending reset and re-attributed the resets to PGOOD, which routes them to the hardware team.</p></div>
+<div class="item"><h4>Memory-timeout data abort</h4><p>A vehicle program's top reset cause. With the silicon vendor, I found that competing bus traffic starved the ISR's error-register reads. The stopgap I shipped cut occurrences to zero.</p></div>
+<div class="item"><h4>I2C bus force-reclaim</h4><p>Releases the orphaned mutex and clocks SCL, so reset reasons log from exception context when a reset preempts a transaction. Fixed log loss seen at nearly every branch sign-off.</p></div>
+<div class="item"><h4>Fleet triage pipeline</h4><p>Extended a Python/Jupyter pipeline that ranks reset causes across the full production fleet. Built a bootloop detector from power state machine CAN signals, with filters for known issues.</p></div>
+<div class="item"><h4>HIL fault injection</h4><p>Tests that force I2C bus lock-ups and resets mid-transaction. They reproduce latent firmware faults and run at every branch sign-off to catch regressions.</p></div>
+</div>
+</div>
+</section>
 
-// Boot
-var lines = document.querySelectorAll(".boot-line");
-var boot  = document.getElementById("boot");
-var main  = document.getElementById("main");
-var hint  = document.getElementById("boot-hint");
-var idx = 0, done = false;
-var delays = [50, 50, 78, 98, 98, 82, 40, 88, 88, 88, 40, 150];
+<!-- FORMULA ELECTRIC -->
+<section id="formula" data-scene="tire" data-dim="1" style="border-top: 1px solid #1D222A">
+<div class="wrap" style="min-height: min(100vh, 760px); box-sizing: border-box; display: flex; align-items: center; padding-top: 96px; padding-bottom: 64px">
+<div style="flex: 0 1 540px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div class="mono">02 · Sep 2024 – Present · Vancouver, BC</div>
+<h2 class="h2">UBC Formula Electric</h2>
+<div class="role">Vehicle Controls Lead</div>
+<p class="lead">I lead a team of 4 that builds the controls stack for a quad-motor FSAE race car: torque vectoring, state estimation, and the real-time firmware below them.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 20px 36px; padding-top: 12px">
+<div style="flex: 1 1 130px"><div class="num" style="color: {{accent}}">2.7 s</div><div class="mono" style="padding-top: 8px">0–100 km/h in simulation</div></div>
+<div style="flex: 1 1 130px"><div class="num">3×</div><div class="mono" style="padding-top: 8px">Fewer trig CPU cycles</div></div>
+<div style="flex: 1 1 130px"><div class="num">&lt;10</div><div class="mono" style="padding-top: 8px">km/h velocity estimation</div></div>
+</div>
+</div>
+</div>
+</section>
 
-function completeBoot() {
-  if (done) return;
-  done = true;
-  lines.forEach(function(l){ l.classList.add("show"); });
-  hint.classList.remove("show");
-  setTimeout(function(){
-    boot.classList.add("fade-out");
-    main.classList.add("visible");
-    setTimeout(fireStatusLines, 500);
-    setTimeout(function(){ boot.style.display = "none"; }, 600);
-  }, 120);
-}
-function nextLine() {
-  if (done) return;
-  if (idx < lines.length) {
-    lines[idx].classList.add("show");
-    var d = delays[idx] !== undefined ? delays[idx] : 90;
-    idx++;
-    setTimeout(nextLine, d);
-  } else {
-    hint.classList.add("show");
-    setTimeout(completeBoot, 920);
+<section data-scene="tire" data-dim="1">
+<div class="wrap" style="min-height: min(100vh, 860px); box-sizing: border-box; display: flex; align-items: center; padding-top: 64px; padding-bottom: 64px">
+<div style="flex: 0 1 540px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<div class="mono" style="color: {{accent}}">Controls</div>
+<h3 class="h3">Quad-motor torque vectoring</h3>
+<p class="lead">Each wheel has its own friction limit, and that limit moves with load transfer. A nonlinear optimizer in C++ chooses target slip ratios that give the desired force and yaw moment.</p>
+<p class="body">PID yaw rate control sets the yaw moment demand. Per-wheel PID speed control tracks the slip targets, and battery-aware power limiting bounds the result. I built a Simulink driver simulation for closed-loop testing and validated yaw control on the vehicle.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span class="chip">C++</span><span class="chip">Nonlinear optimization</span><span class="chip">PID</span><span class="chip">Simulink</span></div>
+</div>
+</div>
+</section>
+
+<section data-scene="ekf" data-dim="1">
+<div class="wrap" style="min-height: min(100vh, 860px); box-sizing: border-box; display: flex; align-items: center; padding-top: 64px; padding-bottom: 64px">
+<div style="flex: 0 1 540px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<div class="mono" style="color: {{accent}}">Estimation</div>
+<h3 class="h3">Body velocity Extended Kalman Filter</h3>
+<p class="lead">At launch the wheels slip and GPS is not accurate below 10 km/h, so no one sensor gives body velocity. The filter fuses IMU, wheel speed, and GPS in C++.</p>
+<p class="body">Outlier rejection handles wheel slip and GPS dropouts. The zero-speed update removes drift when the car is still. The estimate feeds the yaw rate controller and the torque-vectoring loop.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span class="chip">C++</span><span class="chip">EKF</span><span class="chip">IMU / GPS / wheel speed</span></div>
+</div>
+</div>
+</section>
+
+<section data-scene="ecu" data-dim="1">
+<div class="wrap" style="min-height: min(100vh, 860px); box-sizing: border-box; display: flex; align-items: center; padding-top: 64px; padding-bottom: 96px">
+<div style="flex: 0 1 540px; min-width: 0">
+<div class="mono" style="color: {{accent}}; padding-bottom: 18px">Embedded</div>
+<p class="lead" style="padding-bottom: 20px">The controls run on custom ECUs that the team designs. This one is the Vehicle Controller.</p>
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; padding-bottom: 12px">
+<h3 class="h3">Firmware and drivers</h3>
+<a href="https://github.com/UBCFormulaElectric/Consolidated-Firmware" style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; min-height: 44px; display: inline-flex; align-items: center">Consolidated-Firmware repository ↗</a>
+</div>
+<div style="border-bottom: 1px solid #2A303A">
+<div class="item"><h4>ECU firmware</h4><p>Real-time firmware for custom STM32H5/H7 ECUs in C++ with FreeRTOS, CAN, I2C, SPI, UART, ADC, GPIO, and PWM. Unit-tested with gTest; bring-up with SWD and logic analyzers.</p></div>
+<div class="item"><h4>IMU driver</h4><p>Automotive-grade IMU over SPI with on-chip filtering and FIFO buffering. Supplies acceleration and angular rate to the yaw rate controller and the EKF.</p></div>
+<div class="item"><h4>Fixed-point CORDIC driver</h4><p>Cut trigonometric CPU cycles 3× and reduced torque vectoring loop latency.</p></div>
+<div class="item"><h4>eFuse driver</h4><p>Fault-tolerant and hardware-agnostic, shared across ECUs. DMA-driven current sensing, fault handling, and retry logic improved start-up and fault-state reliability.</p></div>
+<div class="item"><h4>CAN-FD / Classic CAN driver</h4><p>Supports 64-byte frames, so legacy and next-generation ECUs communicate on one stack.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- RIVIAN -->
+<section id="rivian" data-scene="plane" data-dim="0.38" style="border-top: 1px solid #1D222A">
+<div class="wrap" style="display: flex; flex-wrap: wrap; gap: 48px 72px; padding-top: 96px; padding-bottom: 96px">
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div class="mono">03 · Sep 2025 – Apr 2026 · Vancouver, BC</div>
+<h2 class="h2">Rivian × VW Group Tech</h2>
+<div class="role">Software Engineer Intern — Infotainment Platform</div>
+<p class="lead">Embedded Linux software for current and next-generation infotainment ECUs: diagnostics, logging, and the flashing tools that the organization uses each day.</p>
+<div style="display: flex; align-items: baseline; gap: 20px; padding: 18px 0; margin-top: 12px; border-top: 1px solid #2A303A; border-bottom: 1px solid #2A303A"><div class="num" style="color: {{accent}}; flex: 0 0 auto">200+</div><div class="mono">Developers on the new flashing flow</div></div>
+</div>
+<div style="flex: 1.35 1 440px; min-width: 0; border-bottom: 1px solid #2A303A; align-self: flex-start">
+<div class="item"><h4>Ethernet switch manager</h4><p>C++ service for the Rivian R2. Reads link status, temperature, and heartbeat registers and streams diagnostics to OBD-II clients over a multithreaded gRPC/Protobuf server.</p></div>
+<div class="item"><h4>Crash-resilient logging</h4><p>C++ framework with persistent UFS storage, automatic log rotation, and cloud upload across ECU power-cycles. Reduced post-crash debug time across Infotainment and Connectivity.</p></div>
+<div class="item"><h4>GPT partitioning tool</h4><p>For embedded Linux images, integrated into flashing scripts and CI pipelines. Replaced a flaky legacy flow with faster, more reliable ECU flashing.</p></div>
+<div class="item"><h4>Yocto / BitBake builds</h4><p>Maintained embedded Linux builds, and wrote and debugged recipes for application and BSP layers.</p></div>
+</div>
+</div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" data-scene="plane" data-dim="0.38" style="border-top: 1px solid #1D222A">
+<div class="wrap" style="display: flex; flex-wrap: wrap; gap: 48px 72px; padding-top: 88px; padding-bottom: 88px">
+<div style="flex: 1.35 1 440px; min-width: 0">
+<div class="mono" style="padding-bottom: 20px">04 · Skills</div>
+<div style="border-bottom: 1px solid #2A303A">
+<div class="spec"><div class="mono">Languages</div><div>C, C++, Python, MATLAB, ARM Assembly, SystemVerilog</div></div>
+<div class="spec"><div class="mono">Embedded</div><div>FreeRTOS, STM32, ARM Cortex-M, Embedded Linux, Yocto, BitBake, ROS2</div></div>
+<div class="spec"><div class="mono">Tools</div><div>Vector CANoe, JTAG/SWD, logic analyzer, Simulink, Bazel, CMake, GoogleTest, gRPC, Protobuf, Docker, Altium</div></div>
+<div class="spec"><div class="mono">Education</div><div>BASc Computer Engineering, University of British Columbia — expected May 2028</div></div>
+</div>
+</div>
+<div style="flex: 1 1 380px; min-width: 0">
+<div class="mono" style="padding-bottom: 20px">Also built</div>
+<div style="border-bottom: 1px solid #2A303A">
+<div class="item"><h4>F1Tenth autonomous car</h4><p>PPO policy trained for 10M+ timesteps and deployed to a physical robot with ROS2. 50% lower lap time and zero collisions across 30+ runs.</p></div>
+<div class="item"><h4>16-bit ARM CPU on FPGA</h4><p>ARM-inspired CPU in Verilog. Validated on FPGA hardware with assembly test programs.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" data-scene="plane" data-dim="1" style="border-top: 1px solid #1D222A">
+<div class="wrap" style="display: flex; flex-wrap: wrap; gap: 32px 72px; padding-top: 96px; padding-bottom: 72px">
+<div style="flex: 1.35 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div class="mono">05 · Contact</div>
+<h2 class="h2">Contact</h2>
+<p class="lead">Interested in embedded software, controls, firmware, and production systems roles where reliability and systems thinking matter.</p>
+</div>
+<div style="flex: 1 1 380px; min-width: 0; align-self: flex-end; border-bottom: 1px solid #2A303A">
+<a class="row" href="mailto:"><span class="mono">Email</span><span style="font-size: 16px">aditya16dhiman@gmail.com →</span></a>
+<a class="row" href="https://www.linkedin.com/in/adityadhiman18/"><span class="mono">LinkedIn</span><span style="font-size: 16px">in/adityadhiman18 ↗</span></a>
+<a class="row" href="https://github.com/Aditya-Dhiman4"><span class="mono">GitHub</span><span style="font-size: 16px">Aditya-Dhiman4 ↗</span></a>
+<a class="row" href="https://aditya-dhiman4.github.io/Aditya_Dhiman_Resume.pdf"><span class="mono">Resume</span><span style="font-size: 16px">PDF ↗</span></a>
+</div>
+</div>
+<div class="wrap" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-top: 22px; padding-bottom: 22px; border-top: 1px solid #1D222A">
+<div class="mono">Aditya Dhiman · Embedded Systems · UBC</div>
+<div class="mono">Vancouver, BC</div>
+</div>
+</section>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FFB000","options":["#FFB000","#4CC9F0","#C6F432","#FF6A3D"],"section":"Look"},"intensity":{"editor":"range","default":1,"min":0.3,"max":1.4,"step":0.1,"section":"Background"},"$preview":{"width":1440,"height":6600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const CAPS = {
+      plane: '',
+      tire: '',
+      ekf: ''
+    };
+    const key = (this.state && this.state.cap) || 'plane';
+    return { accent: this.props.accent ?? '#FFB000', cap: CAPS[key] || '' };
+  }
+
+  componentDidMount() {
+    const self = this;
+    this.reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.setup();
+    this._tick = function () { self.frame(); };
+    this._raf = requestAnimationFrame(this._tick);
+  }
+
+  componentWillUnmount() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    this._dead = true;
+  }
+
+  setup() {
+    const N = 4500, QN = 1125, GI = 45, GJ = 25;
+    let seed = 2027;
+    const R = function () {
+      seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const gn = function () { return Math.sqrt(-2 * Math.log(1 - R() * 0.9999)) * Math.cos(6.283185307 * R()); };
+    const ss = function (a, b, x) { const u = x <= a ? 0 : x >= b ? 1 : (x - a) / (b - a); return u * u * (3 - 2 * u); };
+    const mk = function () { return { P: new Float32Array(N * 3), C: new Uint8Array(N), A: new Float32Array(N) }; };
+    const stag = new Float32Array(N);
+    for (let i = 0; i < N; i++) stag[i] = R();
+    const SX = [1, 1, -1, -1], SY = [1, -1, 1, -1];
+
+    // ---- Scene 1: ground plane. Four quadrants, one for each wheel. ----
+    const plane = mk();
+    plane.view = function (t, W, H) {
+      return { cx: W * 0.5, cy: H * 0.6, S: Math.max(W / 7, H / 4.4), yaw: 0.35 + 0.05 * Math.sin(t * 0.12), pitch: 0.2, zc: 0 };
+    };
+    for (let q = 0; q < 4; q++) for (let j = 0; j < GJ; j++) for (let i = 0; i < GI; i++) {
+      const k = q * QN + j * GI + i;
+      plane.P[k * 3] = SX[q] * (i + 0.5) / GI * 6; plane.P[k * 3 + 1] = SY[q] * (j + 0.5) / GJ * 4; plane.P[k * 3 + 2] = 0;
+    }
+    plane.fill = function (t) {
+      const xs = -7 + (t * 0.9) % 14;
+      for (let k = 0; k < N; k++) {
+        const d = (plane.P[k * 3] - xs) / 0.3;
+        plane.A[k] = 0.42 + 0.5 * Math.exp(-d * d);
+      }
+    };
+
+    // ---- Scene 2: skidpad. The car drives the figure of eight; arrows show the tire force at each wheel. ----
+    // Placeholder vehicle and tire parameters: replace with the car's values.
+    const VP = { m: 280, g: 9.81, h: 0.28, L: 1.55, tw: 1.2, mu0: 1.6, ks: 0.12, B: 10, C: 1.6, kM: 45 };
+    // Skidpad geometry in metres (FSAE): 15.25 m inner, 21.25 m outer, centres 18.25 m apart.
+    const KS = 0.5, CR = 9.125, RIN = 7.625, ROUT = 10.625, FA = 1 / 1500, TAU = 6.283185307;
+    const WXF = 0.58, WXR = -0.97, WYH = 0.61;
+    const skid = mk();
+    skid.w = [{}, {}, {}, {}];
+    skid.view = function (t, W, H, wide) {
+      return wide
+        ? { cx: W * 0.7, cy: H * 0.6, S: Math.min(W * 0.54 / 4.0, H / 2.7), yaw: 0.5 + 0.15 * Math.sin(t * 0.13), pitch: 0.3, zc: 0.3 }
+        : { cx: W * 0.5, cy: H * 0.55, S: W / 4.0, yaw: 0.5, pitch: 0.3, zc: 0.3 };
+    };
+    // One loop: right circle clockwise, then left circle counter-clockwise. Returns [x, y, heading, turn].
+    skid.path = function (p) {
+      if (p < 0.5) { const ph = Math.PI - p * 2 * TAU; return [CR + CR * Math.cos(ph), CR * Math.sin(ph), Math.atan2(-Math.cos(ph), Math.sin(ph)), -1]; }
+      const ph = (p - 0.5) * 2 * TAU;
+      return [-CR + CR * Math.cos(ph), CR * Math.sin(ph), Math.atan2(Math.cos(ph), -Math.sin(ph)), 1];
+    };
+    // Static world layout in metres, 5 values for each point: x, y, z, alpha, class.
+    // Index plan: ground 0-2099 (moves with the car), cones 2100-3139, painted lines 3140-4099, trail 4100-4499.
+    const WS = new Float32Array(N * 5);
+    (function () {
+      let o = 2100;
+      const put = function (x, y, z, a, c) { WS[o * 5] = x; WS[o * 5 + 1] = y; WS[o * 5 + 2] = z; WS[o * 5 + 3] = a; WS[o * 5 + 4] = c; o++; };
+      const vis = function (x, y, s) { const dx = x + s * CR; return dx * dx + y * y < ROUT * ROUT ? 0 : 1; };
+      const cone = function (x, y, v) {
+        for (let i = 0; i < 6; i++) put(x + 0.11 * Math.cos(i / 6 * TAU), y + 0.11 * Math.sin(i / 6 * TAU), 0.02, 0.8 * v, 2);
+        for (let i = 0; i < 3; i++) put(x + 0.06 * Math.cos(i / 3 * TAU), y + 0.06 * Math.sin(i / 3 * TAU), 0.16, 0.8 * v, 2);
+        put(x, y, 0.3, 0.9 * v, 2);
+      };
+      for (let s = -1; s <= 1; s += 2) {
+        for (let i = 0; i < 24; i++) cone(s * CR + RIN * Math.cos(i / 24 * TAU), RIN * Math.sin(i / 24 * TAU), 1);
+        for (let i = 0; i < 28; i++) { const x = s * CR + ROUT * Math.cos(i / 28 * TAU), y = ROUT * Math.sin(i / 28 * TAU); cone(x, y, vis(x, y, s)); }
+      }
+      for (let s = -1; s <= 1; s += 2) {
+        for (let i = 0; i < 200; i++) put(s * CR + RIN * Math.cos(i / 200 * TAU), RIN * Math.sin(i / 200 * TAU), 0, 0.5, 0);
+        for (let i = 0; i < 280; i++) { const x = s * CR + ROUT * Math.cos(i / 280 * TAU), y = ROUT * Math.sin(i / 280 * TAU); put(x, y, 0, 0.5 * vis(x, y, s), 0); }
+      }
+    })();
+
+    // Generic FSAE-style car as points, in metres (x forward, y left, z up). Not the team's CAD.
+    const car = (function (density) {
+      const pts = [];
+      let kind = 0;
+      const add = function (x, y, z, g) { pts.push(x - 0.2, y, z, g, kind); };
+      const NN = function (k) { return Math.max(2, Math.round(k * density)); };
+      const line = function (a, b, k, g) {
+        const n = NN(k);
+        for (let i = 0; i < n; i++) { const u = R(); add(a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, g); }
+      };
+      const plate = function (k, g, fn) { const n = NN(k); for (let i = 0; i < n; i++) { const p = fn(R(), R()); add(p[0], p[1], p[2], g); } };
+      const ST = [[1.52, 0.05, 0.15, 0.23], [1.2, 0.15, 0.09, 0.33], [0.8, 0.23, 0.06, 0.43], [0.35, 0.28, 0.05, 0.5], [-0.2, 0.3, 0.05, 0.53], [-0.6, 0.28, 0.05, 0.52], [-0.98, 0.21, 0.08, 0.4]];
+      const sect = function (x) {
+        for (let i = 0; i < ST.length - 1; i++) {
+          const a = ST[i], b = ST[i + 1];
+          if (x <= a[0] && x >= b[0]) { const u = (a[0] - x) / (a[0] - b[0]); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, a[3] + (b[3] - a[3]) * u]; }
+        }
+        const e = x > ST[0][0] ? ST[0] : ST[ST.length - 1];
+        return [e[1], e[2], e[3]];
+      };
+      const skin = function (x, a) {
+        const s = sect(x), ca = Math.cos(a), sa = Math.sin(a), hh = (s[2] - s[1]) / 2;
+        return [x, s[0] * Math.sign(ca) * Math.sqrt(Math.abs(ca)), s[1] + hh + hh * Math.sign(sa) * Math.sqrt(Math.abs(sa))];
+      };
+      const open = function (x, a) { return x < 0.3 && x > -0.46 && Math.sin(a) > 0.72; };
+      let n = NN(2300);
+      for (let i = 0; i < n; i++) { const x = -0.98 + R() * 2.5, a = R() * TAU; if (open(x, a)) continue; const p = skin(x, a); add(p[0], p[1], p[2], 0); }
+      for (let x = -0.98; x <= 1.521; x += 0.125) {
+        n = NN(60);
+        for (let i = 0; i < n; i++) { const a = R() * TAU; if (open(x, a)) continue; const p = skin(x, a); add(p[0], p[1], p[2], 3); }
+      }
+      plate(110, 0, function (u, v) { return [-0.98, (u * 2 - 1) * 0.21, 0.08 + v * 0.32]; });
+      n = NN(150);
+      for (let i = 0; i < n; i++) { const x = -0.46 + R() * 0.76, s = sect(x); add(x, (R() < 0.5 ? -1 : 1) * s[0] * 0.83, s[1] + (s[2] - s[1]) * 0.925, 3); }
+      n = NN(190);
+      for (let i = 0; i < n; i++) { const a = R() * Math.PI, c = Math.cos(a); add(-0.52, 0.27 * Math.sign(c) * Math.pow(Math.abs(c), 0.7), 0.5 + 0.64 * Math.pow(Math.sin(a), 0.7), 3); }
+      n = NN(80);
+      for (let i = 0; i < n; i++) { const a = R() * Math.PI; add(0.33, 0.26 * Math.cos(a), 0.5 + 0.15 * Math.sin(a), 3); }
+      line([-0.52, 0.2, 0.98], [-0.96, 0.17, 0.4], 50, 3);
+      line([-0.52, -0.2, 0.98], [-0.96, -0.17, 0.4], 50, 3);
+      n = NN(230);
+      for (let i = 0; i < n; i++) { const u = R() * 2 - 1, a = R() * TAU, r = Math.sqrt(1 - u * u) * 0.125; add(-0.3 + r * Math.cos(a), r * Math.sin(a), 0.86 + u * 0.125, 0); }
+      const RT = 0.205, HW = 0.1;
+      const wheel = function (cx, cy) {
+        const s = Math.sign(cy);
+        kind = cx > 0 ? (cy > 0 ? 1 : 2) : 3;
+        let m = NN(430);
+        for (let i = 0; i < m; i++) { const a = R() * TAU; add(cx + RT * Math.cos(a), cy + (R() * 2 - 1) * HW, RT + RT * Math.sin(a), 1); }
+        for (let side = -1; side <= 1; side += 2) {
+          m = NN(190);
+          for (let i = 0; i < m; i++) { const a = R() * TAU, rr = 0.13 + Math.sqrt(R()) * (RT - 0.13); add(cx + rr * Math.cos(a), cy + side * HW, RT + rr * Math.sin(a), 1); }
+          m = NN(70);
+          for (let i = 0; i < m; i++) { const a = R() * TAU; add(cx + 0.13 * Math.cos(a), cy + side * HW * 0.9, RT + 0.13 * Math.sin(a), 1); }
+        }
+        m = NN(170);
+        for (let i = 0; i < m; i++) { const a = R() * TAU; add(cx + 0.085 * Math.cos(a), cy - s * (0.1 + R() * 0.15), RT + 0.085 * Math.sin(a), 4); }
+        // Three spokes and three tread bars, so that wheel rotation is visible.
+        for (let k = 0; k < 3; k++) {
+          const a = k / 3 * TAU, ca = Math.cos(a), sa = Math.sin(a);
+          line([cx, cy + s * HW, RT], [cx + RT * ca, cy + s * HW, RT + RT * sa], 26, 1);
+          line([cx + RT * ca, cy - HW, RT + RT * sa], [cx + RT * ca, cy + HW, RT + RT * sa], 22, 1);
+        }
+        kind = 0;
+        const hw = sect(cx)[0], lo = [cx, s * 0.5, 0.11], up = [cx, s * 0.49, 0.31];
+        line(lo, [cx + 0.2, s * hw, 0.09], 32, 3); line(lo, [cx - 0.2, s * hw, 0.09], 32, 3);
+        line(up, [cx + 0.17, s * hw * 0.95, 0.34], 30, 3); line(up, [cx - 0.17, s * hw * 0.95, 0.34], 30, 3);
+        line(lo, [cx, s * hw * 0.9, 0.44], 28, 3);
+      };
+      wheel(0.78, 0.61); wheel(0.78, -0.61); wheel(-0.77, 0.61); wheel(-0.77, -0.61);
+      plate(520, 2, function (u, v) { return [1.38 + u * 0.34, (v * 2 - 1) * 0.7, 0.06 + 0.05 * (1 - u) * (1 - u)]; });
+      plate(300, 2, function (u, v) { const s = v < 0.5 ? -1 : 1, w = (v < 0.5 ? v : v - 0.5) * 2; return [1.3 + u * 0.14, s * (0.17 + w * 0.53), 0.24 - u * 0.11]; });
+      plate(130, 2, function (u, v) { return [1.28 + u * 0.46, 0.7, 0.04 + v * 0.26]; });
+      plate(130, 2, function (u, v) { return [1.28 + u * 0.46, -0.7, 0.04 + v * 0.26]; });
+      plate(420, 2, function (u, v) { return [-1.02 - u * 0.26, (v * 2 - 1) * 0.47, 0.96 + 0.1 * u * u]; });
+      plate(220, 2, function (u, v) { return [-1.2 - u * 0.11, (v * 2 - 1) * 0.47, 1.07 + u * 0.09]; });
+      plate(140, 2, function (u, v) { return [-1.26 - u * 0.07, (v * 2 - 1) * 0.47, 1.15 + u * 0.07]; });
+      plate(260, 2, function (u, v) { return [-1.32 + u * 0.5, 0.47, 0.62 + v * 0.6]; });
+      plate(260, 2, function (u, v) { return [-1.32 + u * 0.5, -0.47, 0.62 + v * 0.6]; });
+      line([-0.98, 0.15, 0.4], [-1.12, 0.15, 0.97], 40, 3);
+      line([-0.98, -0.15, 0.4], [-1.12, -0.15, 0.97], 40, 3);
+      for (let s = -1; s <= 1; s += 2) {
+        plate(230, 2, function (u, v) { const x = -0.55 + u * 0.85; return [x, s * (sect(x)[0] + v * (0.56 - sect(x)[0])), 0.3 - 0.07 * (1 - u) * (1 - u)]; });
+        plate(170, 2, function (u, v) { return [-0.55 + u * 0.85, s * 0.56, 0.06 + v * 0.24]; });
+      }
+      const cn = pts.length / 5, out = { n: cn, B: new Float32Array(cn * 3), K: new Uint8Array(cn), P: new Float32Array(cn * 3), C: new Uint8Array(cn), A: new Float32Array(cn) };
+      const CLS = [0, 0, 1, 0, 1], ALP = [0.7, 0.75, 0.6, 0.85, 0.8];
+      for (let i = 0; i < cn; i++) {
+        out.B[i * 3] = pts[i * 5]; out.B[i * 3 + 1] = pts[i * 5 + 1]; out.B[i * 3 + 2] = pts[i * 5 + 2];
+        out.C[i] = CLS[pts[i * 5 + 3]]; out.A[i] = ALP[pts[i * 5 + 3]]; out.K[i] = pts[i * 5 + 4];
+      }
+      return out;
+    })(0.45);
+    skid.extra = car;
+
+    // Steady-state cornering solution for a LEFT turn at AY. Unknowns: body sideslip and mean steer angle.
+    // Each wheel gets a slip angle from the kinematics, a lateral force from the tire model at its own
+    // normal load, and a longitudinal force from torque vectoring. Right turns mirror this solution.
+    const AY = 11.8, RTY = 0.205;
+    const SS = (function () {
+      const m = VP.m, Fz0 = m * VP.g / 4, v = Math.sqrt(AY * CR), r = v / CR, a = VP.L / 2, hy = VP.tw / 2;
+      const XS = [a, a, -a, -a], YS = [hy, -hy, hy, -hy];   // FL FR RL RR. In a left turn, left = inner.
+      const TH = [-80, 300, -80, 300];                       // torque vectoring: outer wheels drive, inner wheels regen
+      const dFz = m * AY * VP.h / (2 * VP.tw);
+      const evalW = function (beta, delta) {
+        const vx = v * Math.cos(beta), vy = v * Math.sin(beta), out = [];
+        let sFy = 0, sMz = 0;
+        for (let q = 0; q < 4; q++) {
+          const Fz = Fz0 - Math.sign(YS[q]) * dFz;
+          const pk = VP.mu0 * (1 - VP.ks * (Fz - Fz0) / Fz0) * Fz;
+          // Reverse Ackermann: the outer front wheel steers more than the inner one.
+          const d = q === 0 ? delta * 0.9 : q === 1 ? delta * 1.1 : 0;
+          const al = d - Math.atan2(vy + r * XS[q], vx - r * YS[q]);
+          let Fy = pk * Math.sin(VP.C * Math.atan(VP.B * Math.tan(al)));
+          const room = Math.sqrt(Math.max(0, pk * pk - TH[q] * TH[q]));
+          if (Math.abs(Fy) > room) Fy = Math.sign(Fy) * room;
+          const fxb = TH[q] * Math.cos(d) - Fy * Math.sin(d), fyb = TH[q] * Math.sin(d) + Fy * Math.cos(d);
+          sFy += fyb; sMz += XS[q] * fyb - YS[q] * fxb;
+          out.push({ Fz: Fz, Fx: TH[q], Fy: Fy, d: d });
+        }
+        return { e1: sFy - m * AY, e2: sMz, w: out };
+      };
+      let b = -0.02, dl = 0.18;
+      const lim = function (x) { return x > 0.03 ? 0.03 : x < -0.03 ? -0.03 : x; };
+      for (let it = 0; it < 40; it++) {
+        const f = evalW(b, dl), fb = evalW(b + 1e-4, dl), fd = evalW(b, dl + 1e-4);
+        const j11 = (fb.e1 - f.e1) / 1e-4, j12 = (fd.e1 - f.e1) / 1e-4, j21 = (fb.e2 - f.e2) / 1e-4, j22 = (fd.e2 - f.e2) / 1e-4;
+        const det = j11 * j22 - j12 * j21;
+        if (!isFinite(det) || Math.abs(det) < 1e-6) break;
+        b += lim((-f.e1 * j22 + f.e2 * j12) / det);
+        dl += lim((-j11 * f.e2 + j21 * f.e1) / det);
+      }
+      if (!isFinite(b) || !isFinite(dl) || Math.abs(dl) > 0.5 || Math.abs(b) > 0.3) { b = -0.03; dl = 0.2; }
+      const res = evalW(b, dl).w;
+      res.beta = b;
+      return res;
+    })();
+
+    skid.fill = function (t) {
+      const p = (t / 14) % 1, c = skid.path(p);
+      const d = Math.min(p, Math.abs(p - 0.5), 1 - p);
+      const turn = c[3] * ss(0, 0.02, d), ay = turn * AY, Fz0 = VP.m * VP.g / 4;
+      skid.car = c; skid.ay = ay; skid.turn = turn;
+      // Environment, relative to the car. The camera follows the car.
+      const setp = function (k, wx, wy, wz, a, cls) {
+        const dx = wx - c[0], dy = wy - c[1], f = 1 - (dx * dx + dy * dy) / 121;
+        skid.P[k * 3] = dx * KS; skid.P[k * 3 + 1] = dy * KS; skid.P[k * 3 + 2] = wz * KS;
+        skid.A[k] = f > 0 ? a * f : 0; skid.C[k] = cls;
+      };
+      const gx0 = Math.floor(c[0] / 0.5) * 0.5, gy0 = Math.floor(c[1] / 0.5) * 0.5;
+      let k = 0;
+      for (let j = 0; j < 42; j++) for (let i = 0; i < 50; i++, k++) setp(k, gx0 + (i - 25) * 0.5, gy0 + (j - 21) * 0.5, 0, 0.2, 0);
+      for (k = 2100; k < 4100; k++) setp(k, WS[k * 5], WS[k * 5 + 1], WS[k * 5 + 2], WS[k * 5 + 3], WS[k * 5 + 4]);
+      for (let i = 0; i < 400; i++) {
+        const q = skid.path(((p - i / 400 * 0.218) % 1 + 1) % 1);
+        setp(4100 + i, q[0], q[1], 0.01, 0.7 * Math.pow(1 - i / 400, 1.5), 1);
+      }
+      // Car: steer the front wheels, roll the body, then rotate to the heading.
+      // Wheel states. SS is the left-turn solution; a right turn swaps left and right.
+      const sg = c[3], mag = Math.abs(turn);
+      for (let q = 0; q < 4; q++) {
+        const src = SS[sg > 0 ? q : q ^ 1], w = skid.w[q];
+        w.Fz = Fz0 + (src.Fz - Fz0) * mag; w.Fx = src.Fx * mag; w.Fy = src.Fy * sg * mag; w.d = src.d * sg * mag;
+      }
+      skid.hd = c[2] + SS.beta * sg * mag;
+      skid.inner = sg > 0 ? 0 : 1;
+      const ch = Math.cos(skid.hd), sh = Math.sin(skid.hd), roll = 0.03 * turn;
+      const spin = p * 114.67 / RTY, cw = Math.cos(spin), sw = Math.sin(spin);
+      const c1 = Math.cos(skid.w[0].d), s1 = Math.sin(skid.w[0].d), c2 = Math.cos(skid.w[1].d), s2 = Math.sin(skid.w[1].d);
+      for (let i = 0; i < car.n; i++) {
+        let x = car.B[i * 3], y = car.B[i * 3 + 1], z = car.B[i * 3 + 2];
+        const kd = car.K[i];
+        if (kd === 0) { const zz = z - 0.2; z += y * roll; y -= zz * roll; }
+        else {
+          // spin about the axle, then steer the front wheels
+          const wxc = kd === 3 ? WXR : WXF, ddx = x - wxc, ddz = z - RTY;
+          x = wxc + ddx * cw + ddz * sw; z = RTY - ddx * sw + ddz * cw;
+          if (kd < 3) {
+            const py = kd === 1 ? WYH : -WYH, cs = kd === 1 ? c1 : c2, sn = kd === 1 ? s1 : s2, dx = x - WXF, dy = y - py;
+            x = WXF + dx * cs - dy * sn; y = py + dx * sn + dy * cs;
+          }
+        }
+        car.P[i * 3] = (x * ch - y * sh) * KS; car.P[i * 3 + 1] = (x * sh + y * ch) * KS; car.P[i * 3 + 2] = z * KS;
+      }
+    };
+    skid.overlay = function (o) {
+      const ch = Math.cos(skid.hd), sh = Math.sin(skid.hd), mag = Math.abs(skid.turn), side = skid.turn >= 0 ? 1 : -1;
+      const B = function (bx, by, bz) { return [(bx * ch - by * sh) * KS, (bx * sh + by * ch) * KS, bz * KS]; };
+      const len = function (F) { return 0.95 * Math.pow(Math.abs(F) * FA, 0.55); };
+      // Reverse Ackermann: the axle lines of the two front wheels and the rear axle, drawn toward the turn centre.
+      if (mag > 0.6) {
+        for (let q = 0; q < 2; q++) {
+          const d = skid.w[q].d, wy = SY[q] * WYH;
+          o.line(B(WXF, wy, 0.02), B(WXF - Math.sin(d) * side * 9.5, wy + Math.cos(d) * side * 9.5, 0.02), '#6B7482', 1, true);
+        }
+        o.line(B(WXR, 0, 0.02), B(WXR, side * 9.5, 0.02), '#6B7482', 1, true);
+      }
+      for (let q = 0; q < 4; q++) {
+        const w = skid.w[q], wx = SX[q] > 0 ? WXF : WXR, wy = SY[q] * WYH, cd = Math.cos(w.d || 0), sd = Math.sin(w.d || 0);
+        // Normal load: vertical bar above the wheel.
+        const top = 0.5 + w.Fz / 1100 * 0.7;
+        o.line(B(wx, wy, 0.5), B(wx, wy, top), '#6FA3E0', 2);
+        o.text(Math.round(w.Fz) + ' N', B(wx, wy, top + 0.16), '#B7C0CC');
+        // Lateral force: perpendicular to the wheel plane. Longitudinal force: along the wheel plane, drawn at 4x.
+        // Arrow length uses a compressed scale so that the small inner-wheel forces stay visible.
+        const fy = Math.sign(w.Fy) * len(w.Fy), fx = Math.sign(w.Fx) * len(w.Fx);
+        o.arrow(B(wx, wy, 0.02), B(wx - sd * fy, wy + cd * fy, 0.02), '#FFFFFF');
+        o.arrow(B(wx, wy, 0.02), B(wx + cd * fx, wy + sd * fx, 0.02), o.accent);
+        // Steer angle on the front wheels: body axis (dashed), wheel heading (solid), and the value.
+        if (q < 2 && mag > 0.6) {
+          o.line(B(wx, wy, 0.42), B(wx + 0.95, wy, 0.42), '#6B7482', 1, true);
+          o.line(B(wx, wy, 0.42), B(wx + cd * 0.95, wy + sd * 0.95, 0.42), '#DCEBFF', 1.4);
+          o.text('δ ' + Math.abs(w.d * 57.2958).toFixed(1) + '°', B(wx + cd * 1.3, wy + sd * 1.3, 0.42), '#E9ECF1');
+        }
+      }
+    };
+
+    // ---- Scene 3: EKF. A real filter runs once on a simulated launch and corner. ----
+    const ekf = mk();
+    ekf.T = new Float32Array(N); ekf.C0 = new Uint8Array(N); ekf.A0 = new Float32Array(N);
+    ekf.view = function (t, W, H, wide) {
+      return wide
+        ? { cx: W * 0.7, cy: H * 0.56, S: Math.min(W * 0.52 / 4.3, H / 2.9), yaw: -0.22 + 0.08 * Math.sin(t * 0.25), pitch: 0.2, zc: 0.72 }
+        : { cx: W * 0.5, cy: H * 0.5, S: W / 4.4, yaw: -0.22, pitch: 0.2, zc: 0.72 };
+    };
+    (function () {
+      const dt = 0.005, TT = 6, n = 1200, sv = 1.5 / 13;
+      const tx = function (t) { return -1.9 + t / TT * 3.8; };
+      const vxT = new Float32Array(n + 2), vyT = new Float32Array(n + 2), rT = new Float32Array(n + 2);
+      for (let k = 0; k <= n + 1; k++) {
+        const t = k * dt;
+        rT[k] = 0.9 * (ss(2.8, 3.4, t) - ss(5.0, 5.6, t));
+        if (k > 0) vxT[k] = vxT[k - 1] + (5 * ss(0.6, 0.9, t) - 4 * ss(2.2, 3.0, t)) * dt;
+      }
+      for (let k = 0; k <= n + 1; k++) vyT[k] = -0.05 * vxT[k] * rT[k];
+      let x0 = 0, x1 = 0, p00 = 0.0025, p01 = 0, p11 = 0.0025;
+      const upd = function (hx, innov, Rm) {
+        // scalar update with H = [1,0] (hx true) or [0,1]
+        const s = (hx ? p00 : p11) + Rm, k0 = (hx ? p00 : p01) / s, k1 = (hx ? p01 : p11) / s;
+        x0 += k0 * innov; x1 += k1 * innov;
+        if (hx) { const a = p00, b = p01; p00 = a - k0 * a; p01 = b - k0 * b; p11 = p11 - k1 * b; }
+        else { const b = p01, d = p11; p00 = p00 - k0 * b; p01 = b - k0 * d; p11 = d - k1 * d; }
+      };
+      const rec = [], wh = [], gps = [];
+      const KS = [0.25, 0.3, 0.4, 0.45], q = 0.25 * dt;
+      for (let k = 0; k < n; k++) {
+        const t = k * dt, vx = vxT[k], vy = vyT[k], r = rT[k];
+        const axm = (vxT[k + 1] - vx) / dt - r * vy + 0.1 + 0.3 * gn();
+        const aym = (vyT[k + 1] - vy) / dt + r * vx + 0.3 * gn();
+        const rm = r + 0.01 * gn();
+        const nx0 = x0 + dt * (axm + rm * x1), nx1 = x1 + dt * (aym - rm * x0), f = rm * dt;
+        const a = p00 + f * p01, b = p01 + f * p11, c = -f * p00 + p01, d = -f * p01 + p11;
+        p00 = a + f * b + q; p01 = -f * a + b; p11 = -f * c + d + q;
+        x0 = nx0; x1 = nx1;
+        if (t < 0.6) { upd(true, -x0, 1e-4); upd(false, -x1, 1e-4); }
+        if (k % 2 === 0) {
+          const bump = ss(0.6, 0.8, t) * (1 - ss(1.5, 1.9, t));
+          for (let i = 0; i < 4; i++) {
+            const yi = i % 2 === 0 ? 0.6 : -0.6;
+            const z = (vx - r * yi) * (1 + KS[i] * bump) + 0.04 * gn();
+            const h = x0 - rm * yi;
+            const rej = Math.abs((z - h) / Math.max(Math.abs(h), 1)) > 0.1;
+            if (!rej && t >= 0.6) upd(true, z - h, 0.0225);
+            if (k % 8 === 0) wh.push([t, z + rm * yi, rej ? 1 : 0]);
+          }
+        }
+        if (k % 20 === 0 && vx > 2.78 && !(t > 4.0 && t < 4.8)) {
+          const zx = vx + 0.12 * gn(), zy = vy + 0.12 * gn();
+          upd(true, zx - x0, 0.0144); upd(false, zy - x1, 0.0144);
+          gps.push([t, zx, zy]);
+        }
+        if (k % 6 === 0) rec.push([t, x0, x1, p00, p01, p11, vx, vy]);
+      }
+      let o = 0;
+      const put = function (t, vy, vx, cls, al) {
+        ekf.P[o * 3] = tx(t); ekf.P[o * 3 + 1] = vy * sv; ekf.P[o * 3 + 2] = vx * sv;
+        ekf.T[o] = t; ekf.C0[o] = cls; ekf.A0[o] = al; o++;
+      };
+      for (let k = 0; k < 200; k++) {
+        const e = rec[k], tr = (e[3] + e[5]) / 2, df = Math.sqrt((e[3] - e[5]) * (e[3] - e[5]) / 4 + e[4] * e[4]);
+        const l1 = 3 * Math.sqrt(Math.max(1e-9, tr + df)), l2 = 3 * Math.sqrt(Math.max(1e-9, tr - df));
+        const ang = 0.5 * Math.atan2(2 * e[4], e[3] - e[5]), ca = Math.cos(ang), sa = Math.sin(ang);
+        for (let j = 0; j < 14; j++) {
+          const ph = j / 14 * 6.283185307, ex = l1 * Math.cos(ph), ey = l2 * Math.sin(ph);
+          put(e[0], e[2] + ex * sa + ey * ca, e[1] + ex * ca - ey * sa, 1, 0.42);
+        }
+      }
+      const at = function (fi, c) { const i0 = Math.min(198, Math.floor(fi)), u = fi - i0; return rec[i0][c] + (rec[i0 + 1][c] - rec[i0][c]) * u; };
+      for (let i = 0; i < 500; i++) { const fi = i / 499 * 199; put(at(fi, 0), at(fi, 2), at(fi, 1), 0, 0.95); }
+      for (let i = 0; i < 300; i++) { const fi = i / 299 * 199; put(at(fi, 0), at(fi, 7), at(fi, 6), 1, 0.6); }
+      for (let i = 0; i < 600; i++) { const w = wh[i]; put(w[0], 0, w[1], w[2] ? 2 : 0, w[2] ? 0.95 : 0.4); }
+      for (let i = 0; i < 300; i++) {
+        const gI = Math.floor(i / 5);
+        if (gI < gps.length) { const gp = gps[gI]; put(gp[0], gp[2] + (R() - 0.5) * 0.12, gp[1] + (R() - 0.5) * 0.12, 0, 0.9); }
+        else put(6, rec[199][2], rec[199][1], 0, 0);
+      }
+      let zs = 0;
+      for (let i = 0; i < wh.length; i++) if (wh[i][2] && wh[i][1] > zs) zs = wh[i][1];
+      ekf.rec = rec; ekf.tx = tx; ekf.sv = sv; ekf.zSlip = zs;
+      ekf.tGps = gps.length ? gps[0][0] : 1.3;
+    })();
+    ekf.cursor = function (t) { return Math.min(6, (t % 10) / 8 * 6); };
+    ekf.fill = function (t) {
+      const tc = ekf.cursor(t);
+      for (let k = 0; k < N; k++) {
+        const d = ekf.T[k] - tc;
+        ekf.C[k] = ekf.C0[k];
+        ekf.A[k] = ekf.A0[k] * (d <= 0 ? 1 : 0.16);
+        if (k < 2800 && d <= 0 && d > -0.035) { ekf.C[k] = 0; ekf.A[k] = 1; }
+      }
+    };
+    ekf.overlay = function (o, t) {
+      const tx = ekf.tx, sv = ekf.sv, rec = ekf.rec, tc = ekf.cursor(t);
+      const e = rec[Math.min(199, Math.floor(tc / 0.03))];
+      const estAt = function (tt) { return rec[Math.min(199, Math.floor(tt / 0.03))][1] * sv; };
+      o.line([tx(0), 0, 0], [tx(6), 0, 0], '#39414D', 1);
+      o.line([tx(0), 0, 2.78 * sv], [tx(6), 0, 2.78 * sv], '#39414D', 1, true);
+      o.text('10 KM/H', [tx(6) + 0.22, 0, 2.78 * sv], '#98A2B0');
+      for (let s = 0; s <= 6; s += 2) o.text(s + ' s', [tx(s), 0, -0.13], '#98A2B0');
+      o.text('VX', [tx(0) - 0.16, 0, 0.75], '#98A2B0');
+      o.text('ZERO-SPEED UPDATE', [tx(0.3), 0, 0.2], '#B7C0CC');
+      o.text('WHEEL SLIP: REJECTED', [tx(1.25), 0, ekf.zSlip * sv + 0.14], o.accent);
+      o.text('GPS VALID', [tx(ekf.tGps) + 0.1, 0, estAt(ekf.tGps) - 0.3], '#B7C0CC');
+      o.text('GPS DROPOUT', [tx(4.4), 0, estAt(4.4) + 0.42], '#B7C0CC');
+      o.line([tx(tc), 0, 0], [tx(tc), e[2] * sv, e[1] * sv], '#6B7482', 1);
+      o.text('σ(vx) ' + Math.sqrt(e[3]).toFixed(2) + ' m/s', [tx(tc), 0, -0.3], '#E9ECF1');
+    };
+
+    // ---- Scene 4: ECU. Points sampled from the render of the Vehicle Controller board. ----
+    // The point data is a separate file. Until it loads, the scene shows the ground plane.
+    const ecu = mk();
+    ecu.view = function (t, W, H, wide) {
+      return wide
+        ? { cx: W * 0.71, cy: H * 0.55, S: Math.min(W * 0.52 / 3.3, H / 2.5), yaw: 0.25 * Math.sin(t * 0.22), pitch: 0.95, zc: 0.1 }
+        : { cx: W * 0.5, cy: H * 0.5, S: W / 3.4, yaw: 0, pitch: 0.95, zc: 0.1 };
+    };
+    for (let k = 0; k < N; k++) {
+      ecu.P[k * 3] = plane.P[k * 3] * 0.4; ecu.P[k * 3 + 1] = plane.P[k * 3 + 1] * 0.4; ecu.P[k * 3 + 2] = 0;
+      ecu.A[k] = 0.25;
+    }
+    ecu.fill = function () {};
+    fetch('./assets/bde7206e4fd15367e40f5f7fc14a086f.json').then(function (r) { return r.json(); }).then(function (d) {
+      // 6 bytes for each point: x (uint16), y (uint16), height (uint8), class in 2 bits + alpha in 6 bits.
+      const bin = atob(d.q), n = d.n, HWD = 1.5, HHT = 1.5 / d.aspect;
+      const ex = { n: n - N, P: new Float32Array((n - N) * 3), C: new Uint8Array(n - N), A: new Float32Array(n - N) };
+      for (let i = 0; i < n; i++) {
+        const o = i * 6, T = i < N ? ecu : ex, k = i < N ? i : i - N, cb = bin.charCodeAt(o + 5);
+        T.P[k * 3] = ((bin.charCodeAt(o) | (bin.charCodeAt(o + 1) << 8)) / 65535 * 2 - 1) * HWD;
+        T.P[k * 3 + 1] = (1 - (bin.charCodeAt(o + 2) | (bin.charCodeAt(o + 3) << 8)) / 65535 * 2) * HHT;
+        T.P[k * 3 + 2] = bin.charCodeAt(o + 4) / 255 * 0.38;
+        T.C[k] = cb & 3; T.A[k] = (cb >> 2) / 63;
+      }
+      ecu.extra = ex;
+    }).catch(function () {});
+
+    // ---- Scene 5: road. A generic car drives on a highway; eight camera view areas sweep the scene. ----
+    // Index plan: view areas 0-1599, lane lines 1600-2319, other vehicles 2320-3519, ground 3520-4499.
+    const road = mk();
+    // SPIN slows the displayed wheel rotation. The true rate strobes at the screen frame rate and looks too fast.
+    const KR = 0.3, VR = 11, SPIN = 0.35;
+    // Camera: x, y in the car frame (m), heading (rad), half field of view (rad), range (m). Generic values.
+    const CAMS = [
+      [0.6, 0, 0, 0.3, 23], [0.6, 0, 0, 0.45, 16], [0.6, 0, 0, 1.05, 9],
+      [0.1, 0.9, 1.05, 0.75, 10], [0.1, -0.9, -1.05, 0.75, 10],
+      [1.2, 0.93, 2.45, 0.6, 12], [1.2, -0.93, -2.45, 0.6, 12],
+      [-2.3, 0, Math.PI, 1.1, 8]];
+    road.view = function (t, W, H, wide) {
+      return wide
+        ? { cx: W * 0.69, cy: H * 0.6, S: Math.min(W * 0.56 / 4.2, H / 2.8), yaw: 0.75 + 0.25 * Math.sin(t * 0.11), pitch: 0.42, zc: 0.35 }
+        : { cx: W * 0.5, cy: H * 0.55, S: W / 4.2, yaw: 0.75, pitch: 0.42, zc: 0.35 };
+    };
+    const FR = new Float32Array(1600), FB = new Float32Array(3200);
+    for (let c = 0; c < 8; c++) {
+      const cm = CAMS[c];
+      for (let k = 0; k < 200; k++) {
+        let r, ang;
+        if (k < 60) { r = cm[4] * (k + 0.5) / 60; ang = cm[2] - cm[3]; }
+        else if (k < 120) { r = cm[4] * (k - 59.5) / 60; ang = cm[2] + cm[3]; }
+        else { r = cm[4]; ang = cm[2] - cm[3] + 2 * cm[3] * (k - 120) / 79; }
+        const i = c * 200 + k;
+        FR[i] = r; FB[i * 2] = cm[0] + r * Math.cos(ang); FB[i * 2 + 1] = cm[1] + r * Math.sin(ang);
+      }
+    }
+    const seen = function (x, y) {
+      for (let c = 0; c < 8; c++) {
+        const cm = CAMS[c], dx = x - cm[0], dy = y - cm[1], r2 = dx * dx + dy * dy;
+        if (r2 > cm[4] * cm[4]) continue;
+        if (dx * Math.cos(cm[2]) + dy * Math.sin(cm[2]) >= Math.sqrt(r2) * Math.cos(cm[3])) return true;
+      }
+      return false;
+    };
+    // Other vehicles: a simple two-box shape, 400 points.
+    // Body surface from stations [x, half-width, z bottom, z top]. pw sets how square the section is.
+    const carSkin = function (ST, x, a, pw) {
+      let s = ST[ST.length - 1];
+      for (let i = 0; i < ST.length - 1; i++) {
+        const p = ST[i], q = ST[i + 1];
+        if (x <= p[0] && x >= q[0]) { const u = (p[0] - x) / (p[0] - q[0]); s = [0, p[1] + (q[1] - p[1]) * u, p[2] + (q[2] - p[2]) * u, p[3] + (q[3] - p[3]) * u]; break; }
+      }
+      const ca = Math.cos(a), sa = Math.sin(a), hh = (s[3] - s[2]) / 2;
+      return [x, s[1] * Math.sign(ca) * Math.pow(Math.abs(ca), pw), s[2] + hh + hh * Math.sign(sa) * Math.pow(Math.abs(sa), pw)];
+    };
+    const SEDAN = [[2.3, 0.55, 0.35, 0.62], [1.95, 0.86, 0.22, 0.78], [1.25, 0.9, 0.2, 0.9], [0.45, 0.88, 0.2, 1.36], [-0.4, 0.88, 0.2, 1.42], [-1.3, 0.88, 0.2, 1.28], [-1.95, 0.86, 0.22, 1.0], [-2.3, 0.68, 0.35, 0.85]];
+    const VL = new Float32Array(1200);
+    for (let i = 0; i < 400; i++) {
+      let p;
+      if (i < 130) p = carSkin(SEDAN, -2.3 + Math.floor(R() * 13) / 12 * 4.6, R() * TAU, 0.5);   // section rings
+      else if (i < 320) p = carSkin(SEDAN, -2.3 + R() * 4.6, R() * TAU, 0.5);
+      else { const w = i % 4, a = R() * TAU; p = [(w < 2 ? 1.4 : -1.4) + 0.32 * Math.cos(a), (w % 2 ? -0.85 : 0.85), 0.32 + 0.32 * Math.sin(a)]; }
+      VL[i * 3] = p[0]; VL[i * 3 + 1] = p[1]; VL[i * 3 + 2] = p[2];
+    }
+    road.veh = [{ y: 3.6 }, { y: -3.6 }, { y: 0 }];
+    // The car itself: generic body, wheels, the Autopilot computer as a bright block, and links to the cameras.
+    const ego = (function () {
+      const pts = [];
+      const add = function (x, y, z, c, a, w) { pts.push(x, y, z, c, a, w || 0); };
+      // Cybercab-style shape, by eye: short blunt nose, long windshield, roof peak over the seats,
+      // fastback to a high flat tail, flat sides, full-width light bars, and solid wheel covers.
+      const ST = [[2.15, 0.8, 0.3, 0.62], [1.9, 0.92, 0.2, 0.7], [1.35, 0.95, 0.18, 0.82], [0.3, 0.93, 0.18, 1.3], [-0.3, 0.93, 0.18, 1.32], [-1.3, 0.94, 0.18, 1.12], [-2.0, 0.93, 0.22, 0.92], [-2.15, 0.88, 0.32, 0.88]];
+      const skin = function (x, a) { return carSkin(ST, x, a, 0.3); };
+      for (let i = 0; i < 2300; i++) { const p = skin(-2.15 + R() * 4.3, R() * TAU); add(p[0], p[1], p[2], 0, 0.28); }
+      for (let x = -2.1; x <= 2.11; x += 0.21) for (let i = 0; i < 70; i++) { const p = skin(x, R() * TAU); add(p[0], p[1], p[2], 0, 0.45); }
+      for (let i = 0; i < 240; i++) { const p = skin(-2.15 + i / 239 * 4.3, Math.PI / 2); add(p[0], 0, p[2], 0, 0.8); }
+      // side glass outline on both sides
+      const GL = [[1.3, 0.84], [0.3, 1.25], [-0.4, 1.27], [-1.25, 0.96], [1.3, 0.84]];
+      for (let sd = -1; sd <= 1; sd += 2) for (let k = 0; k < 4; k++) for (let i = 0; i < 45; i++) {
+        const u = i / 45; add(GL[k][0] + (GL[k + 1][0] - GL[k][0]) * u, sd * 0.94, GL[k][1] + (GL[k + 1][1] - GL[k][1]) * u, 0, 0.85);
+      }
+      // light bars, front and rear
+      for (let i = 0; i < 130; i++) { add(2.16, (i / 129 * 2 - 1) * 0.74, 0.6, 0, 1); add(-2.16, (i / 129 * 2 - 1) * 0.84, 0.84, 0, 1); }
+      const WC = [[1.38, 0.84], [1.38, -0.84], [-1.38, 0.84], [-1.38, -0.84]];
+      for (let w = 0; w < 4; w++) {
+        const cx = WC[w][0], cy = WC[w][1], so = Math.sign(cy) * 0.12;
+        for (let i = 0; i < 170; i++) { const a = R() * TAU; add(cx + 0.36 * Math.cos(a), cy + (R() * 2 - 1) * 0.12, 0.36 + 0.36 * Math.sin(a), 0, 0.6, w + 1); }
+        for (let i = 0; i < 230; i++) { const a = R() * TAU, rr = Math.sqrt(R()) * 0.36; add(cx + rr * Math.cos(a), cy + so, 0.36 + rr * Math.sin(a), 0, 0.5, w + 1); }   // solid cover
+        for (let k = 0; k < 3; k++) for (let i = 0; i < 20; i++) { const a = k / 3 * TAU, rr = R() * 0.36; add(cx + rr * Math.cos(a), cy + so, 0.36 + rr * Math.sin(a), 0, 0.95, w + 1); }
+      }
+      for (let i = 0; i < 260; i++) add(0.75 + R() * 0.4, (R() - 0.5) * 0.56, 0.6 + R() * 0.12, 2, 1);
+      const NODES = [[0.6, 0, 1.16], [0.1, 0.9, 1.0], [0.1, -0.9, 1.0], [1.2, 0.93, 0.75], [1.2, -0.93, 0.75], [-2.15, 0, 0.9]];
+      for (let q = 0; q < NODES.length; q++) {
+        const nd = NODES[q];
+        for (let i = 0; i < 45; i++) { const u = R(); add(0.95 + (nd[0] - 0.95) * u, nd[1] * u, 0.66 + (nd[2] - 0.66) * u, 2, 0.5); }
+        for (let i = 0; i < 16; i++) add(nd[0] + (R() - 0.5) * 0.08, nd[1] + (R() - 0.5) * 0.08, nd[2] + (R() - 0.5) * 0.08, 2, 1);
+      }
+      for (let i = 0; i < 1800; i++) add(0, 0, 0, 2, 0);   // reserved: dense points for detected vehicles
+      const n = pts.length / 6, out = { n: n, B: new Float32Array(n * 3), Wh: new Uint8Array(n), WC: WC, P: new Float32Array(n * 3), C: new Uint8Array(n), A: new Float32Array(n) };
+      for (let i = 0; i < n; i++) {
+        for (let k = 0; k < 3; k++) { out.B[i * 3 + k] = pts[i * 6 + k]; out.P[i * 3 + k] = pts[i * 6 + k] * KR; }
+        out.C[i] = pts[i * 6 + 3]; out.A[i] = pts[i * 6 + 4]; out.Wh[i] = pts[i * 6 + 5];
+      }
+      return out;
+    })();
+    road.extra = ego;
+    // A denser shape for a vehicle that a camera sees: 600 points on section rings, outline, and wheels.
+    const VX0 = ego.n - 1800, VL2 = new Float32Array(1800);
+    for (let i = 0; i < 600; i++) {
+      let p;
+      if (i < 300) p = carSkin(SEDAN, -2.3 + Math.floor(R() * 24) / 23 * 4.6, R() * TAU, 0.5);
+      else if (i < 400) p = carSkin(SEDAN, -2.3 + (i - 300) / 99 * 4.6, Math.PI / 2, 0.5);
+      else if (i < 500) { p = carSkin(SEDAN, -2.3 + (i - 400) / 99 * 4.6, (i % 2) * Math.PI, 0.5); }
+      else {
+        // wheels: half the points on the rim, half on three spokes, so that rotation is visible
+        const w = i % 4, sp = i % 8 < 4, a = sp ? Math.floor(R() * 3) / 3 * TAU : R() * TAU, rr = (sp ? R() : 1) * 0.32;
+        p = [(w < 2 ? 1.4 : -1.4) + rr * Math.cos(a), (w % 2 ? -0.86 : 0.86), 0.32 + rr * Math.sin(a)];
+      }
+      VL2[i * 3] = p[0]; VL2[i * 3 + 1] = p[1]; VL2[i * 3 + 2] = p[2];
+    }
+    road.fill = function (t) {
+      const P = road.P, C = road.C, A = road.A, sh = VR * t;
+      for (let k = 0; k < 1600; k++) {
+        const rg = CAMS[(k / 200) | 0][4], d = (FR[k] - (t * 7) % rg) / 0.8;
+        P[k * 3] = FB[k * 2] * KR; P[k * 3 + 1] = FB[k * 2 + 1] * KR; P[k * 3 + 2] = 0.03 * KR;
+        C[k] = 1; A[k] = 0.28 + 0.6 * Math.exp(-d * d);
+      }
+      // Points inside a camera view area are bright. Points outside are dim.
+      const setp = function (k, x, y, z, a) {
+        const f = 1 - (x * x + y * y) / 576;
+        P[k * 3] = x * KR; P[k * 3 + 1] = y * KR; P[k * 3 + 2] = z * KR;
+        C[k] = 0; A[k] = f > 0 ? a * f * (seen(x, y) ? 1 : 0.3) : 0;
+      };
+      const wrap = function (x, m) { return ((x % m) + m) % m - m / 2; };
+      const LY = [-5.4, -1.8, 1.8, 5.4];
+      for (let l = 0; l < 4; l++) for (let j = 0; j < 180; j++) {
+        const x0 = l === 0 || l === 3 ? j / 180 * 48 : Math.floor(j / 45) * 12 + (j % 45) / 45 * 4;
+        setp(1600 + l * 180 + j, wrap(x0 - sh, 48), LY[l], 0.02, 0.85);
+      }
+      for (let v = 0; v < 3; v++) {
+        const V = road.veh[v];
+        V.x = v === 0 ? wrap(33 + 1.3 * t, 48) : v === 1 ? wrap(17 - 0.9 * t, 48) : 13 + 3 * Math.sin(t * 0.2);
+        V.seen = seen(V.x, V.y);
+        V.s = (V.s || 0) + ((V.seen ? 1 : 0) - (V.s || 0)) * 0.07;
+        for (let i = 0; i < 400; i++) setp(2320 + v * 400 + i, V.x + VL[i * 3], V.y + VL[i * 3 + 1], VL[i * 3 + 2], 0.7);
+        // detected: the dense accent shape fades in over the dim one
+        const fd = Math.max(0, 1 - (V.x * V.x + V.y * V.y) / 576) * V.s;
+        const tv = (VR + (v === 0 ? 1.3 : v === 1 ? -0.9 : 0)) * t * SPIN / 0.32, cv = Math.cos(tv), sv2 = Math.sin(tv);
+        for (let i = 0; i < 600; i++) {
+          const k = VX0 + v * 600 + i;
+          let lx = VL2[i * 3], lz = VL2[i * 3 + 2];
+          if (i >= 500) { const wx = i % 4 < 2 ? 1.4 : -1.4, dx = lx - wx, dz = lz - 0.32; lx = wx + dx * cv + dz * sv2; lz = 0.32 - dx * sv2 + dz * cv; }
+          ego.P[k * 3] = (V.x + lx) * KR; ego.P[k * 3 + 1] = (V.y + VL2[i * 3 + 1]) * KR; ego.P[k * 3 + 2] = lz * KR;
+          ego.A[k] = fd;
+        }
+      }
+      for (let j = 0; j < 20; j++) for (let i = 0; i < 49; i++) setp(3520 + j * 49 + i, wrap(i - sh, 49), j - 9.5, 0, 0.16);
+      const th = sh * SPIN / 0.36, cw = Math.cos(th), sw = Math.sin(th);
+      for (let i = 0; i < ego.n; i++) {
+        const w = ego.Wh[i];
+        if (!w) continue;
+        const wx = ego.WC[w - 1][0], dx = ego.B[i * 3] - wx, dz = ego.B[i * 3 + 2] - 0.36;
+        ego.P[i * 3] = (wx + dx * cw + dz * sw) * KR; ego.P[i * 3 + 2] = (0.36 - dx * sw + dz * cw) * KR;
+      }
+    };
+    road.overlay = function (o) {
+      // Four thin corner marks on the ground below each vehicle that a camera sees. They fade in and out.
+      for (let v = 0; v < 3; v++) {
+        const V = road.veh[v];
+        if (!(V.s > 0.03)) continue;
+        const z = 0.03 * KR, e = 0.55;
+        for (let sx = -1; sx <= 1; sx += 2) for (let sy = -1; sy <= 1; sy += 2) {
+          const cx = V.x + sx * 2.45, cy = V.y + sy * 1.05;
+          o.line([cx * KR, cy * KR, z], [(cx - sx * e) * KR, cy * KR, z], o.accent, 1, false, V.s);
+          o.line([cx * KR, cy * KR, z], [cx * KR, (cy - sy * e) * KR, z], o.accent, 1, false, V.s);
+        }
+      }
+    };
+
+    this.N = N;
+    this.stag = stag;
+    this.scenes = { plane: plane, tire: skid, ekf: ekf, ecu: ecu, road: road };
+    this.hb = mk();
+  }
+
+  frame() {
+    if (this._dead) return;
+    this._raf = requestAnimationFrame(this._tick);
+    const cv = this.cv && this.cv.isConnected ? this.cv : (this.cv = document.querySelector('canvas[data-bg]'));
+    if (!cv || !cv.getContext) return;
+    const rect = cv.getBoundingClientRect();
+    if (rect.width < 2 || rect.height < 2) return;
+    let dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (rect.width * rect.height * dpr * dpr > 3.4e6) dpr = Math.sqrt(3.4e6 / (rect.width * rect.height));
+    const W = Math.round(rect.width * dpr), H = Math.round(rect.height * dpr);
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    const now = performance.now();
+    if (this.t0 == null) this.t0 = now;
+    const t = this.reduce ? 3.2 : (now - this.t0) / 1000;
+    if (!this.secs || !this.secs.length || now - (this.secsAt || 0) > 2000) {
+      this.secs = Array.prototype.slice.call(document.querySelectorAll('[data-scene]'));
+      this.secsAt = now;
+    }
+    if (!this.secs.length) return;
+
+    // Which two sections are we between? The blend follows the scroll position.
+    const vh = rect.height;
+    let from = this.secs[0], to = this.secs[0], w = 1;
+    for (let j = 1; j < this.secs.length; j++) {
+      const top = this.secs[j].getBoundingClientRect().top - rect.top;
+      let wj = (0.85 * vh - top) / (0.6 * vh);
+      wj = wj < 0 ? 0 : wj > 1 ? 1 : wj;
+      if (wj > 0) { from = this.secs[j - 1]; to = this.secs[j]; w = wj; }
+    }
+    const ka = from.getAttribute('data-scene'), kb = to.getAttribute('data-scene');
+    const sa = this.scenes[ka] || this.scenes.plane, sb = this.scenes[kb] || this.scenes.plane;
+    const da = Number(from.getAttribute('data-dim')) || 1, db = Number(to.getAttribute('data-dim')) || 1;
+    const capKey = w >= 0.5 ? kb : ka;
+    if (capKey !== this.capKey) { this.capKey = capKey; this.setState({ cap: capKey }); }
+
+    const wide = rect.width >= 900;
+    const ew = w * w * (3 - 2 * w);
+    const narrowDim = function (k) { return !wide && k !== 'plane' ? 0.42 : 1; };
+    const fadeIn = this.reduce ? 1 : Math.min(1, t / 1.4);
+    const mul = (this.props.intensity ?? 1) * fadeIn * ((da * narrowDim(ka)) + (db * narrowDim(kb) - da * narrowDim(ka)) * ew);
+    const accent = this.props.accent ?? '#FFB000';
+
+    sb.fill(t);
+    let P = sb.P, C = sb.C, A = sb.A, view = sb.view(t, W, H, wide);
+    if (sa !== sb && w < 1) {
+      sa.fill(t);
+      const hb = this.hb, N = this.N, st = this.stag;
+      for (let i = 0; i < N; i++) {
+        let e = w * 1.35 - st[i] * 0.35;
+        e = e < 0 ? 0 : e > 1 ? 1 : e;
+        e = e * e * (3 - 2 * e);
+        const j = i * 3;
+        hb.P[j] = sa.P[j] + (sb.P[j] - sa.P[j]) * e;
+        hb.P[j + 1] = sa.P[j + 1] + (sb.P[j + 1] - sa.P[j + 1]) * e;
+        hb.P[j + 2] = sa.P[j + 2] + (sb.P[j + 2] - sa.P[j + 2]) * e;
+        hb.A[i] = sa.A[i] + (sb.A[i] - sa.A[i]) * e;
+        hb.C[i] = e < 0.5 ? sa.C[i] : sb.C[i];
+      }
+      P = hb.P; C = hb.C; A = hb.A;
+      const va = sa.view(t, W, H, wide), vb = view;
+      view = {};
+      for (const key in vb) view[key] = va[key] + (vb[key] - va[key]) * ew;
+    }
+
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, W, H);
+    const cyaw = Math.cos(view.yaw), syaw = Math.sin(view.yaw), cp = Math.cos(view.pitch), sp = Math.sin(view.pitch);
+    const CAM = 7, S = view.S, cx = view.cx, cy = view.cy, zc = view.zc, N = this.N;
+    const COL = ['#DCEBFF', '#6FA3E0', accent];
+    ctx.globalCompositeOperation = 'lighter';
+    const drawPts = function (P, C, A, N, mul) {
+    for (let cls = 0; cls < 3; cls++) {
+      ctx.fillStyle = COL[cls];
+      const base = dpr * (cls === 2 ? 1.9 : 1.4);
+      for (let i = 0; i < N; i++) {
+        if (C[i] !== cls) continue;
+        let a = A[i] * mul;
+        if (a <= 0.012) continue;
+        const j = i * 3, x = P[j], y = P[j + 1];
+        const px = x * cyaw - y * syaw, py = x * syaw + y * cyaw, pz = P[j + 2] - zc;
+        const depth = py * cp - pz * sp;
+        if (CAM + depth < 1.4) continue;
+        const sc = CAM / (CAM + depth);
+        const X = cx + px * sc * S, Y = cy - (py * sp + pz * cp) * sc * S;
+        if (X < -4 || Y < -4 || X > W + 4 || Y > H + 4) continue;
+        const da2 = 0.82 - depth * 0.14;
+        a *= da2 < 0.12 ? 0.12 : da2 > 1 ? 1 : da2;
+        const s = base * (sc > 2 ? 2 : sc);
+        ctx.globalAlpha = a > 1 ? 1 : a;
+        ctx.fillRect(X - s / 2, Y - s / 2, s, s);
+      }
+    }
+    };
+    drawPts(P, C, A, N, mul);
+    // A scene can carry extra points (the car). They fade in with their scene.
+    const xs = [[sa, sa === sb ? 0 : 1 - ew], [sb, sa === sb ? 1 : ew]];
+    for (let q = 0; q < 2; q++) {
+      const ex = xs[q][0].extra, wq = xs[q][1];
+      if (ex && wq > 0.02) drawPts(ex.P, ex.C, ex.A, ex.n, mul * wq * wq);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Annotations: only when one scene is fully formed, and only on wide screens.
+    const scene = sa === sb || w > 0.5 ? sb : sa;
+    let la = sa === sb ? 1 : w > 0.5 ? (w - 0.82) / 0.18 : (0.18 - w) / 0.18;
+    la = (la < 0 ? 0 : la > 1 ? 1 : la) * Math.min(1, mul * 1.2);
+    if (wide && scene.overlay && la > 0.01) {
+      const proj = function (p) {
+        const px = p[0] * cyaw - p[1] * syaw, py = p[0] * syaw + p[1] * cyaw, pz = p[2] - zc;
+        const sc = CAM / (CAM + py * cp - pz * sp);
+        return [cx + px * sc * S, cy - (py * sp + pz * cp) * sc * S];
+      };
+      ctx.font = '500 ' + Math.round(11 * dpr) + 'px "IBM Plex Mono", ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      scene.overlay({
+        accent: accent,
+        line: function (p1, p2, color, width, dash, al) {
+          const a = proj(p1), b = proj(p2);
+          ctx.globalAlpha = la * (al == null ? 1 : al); ctx.strokeStyle = color; ctx.lineWidth = width * dpr;
+          ctx.setLineDash(dash ? [4 * dpr, 5 * dpr] : []);
+          ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+          ctx.setLineDash([]);
+        },
+        dot: function (p, color) {
+          const a = proj(p), s = 7 * dpr;
+          ctx.globalAlpha = la; ctx.fillStyle = '#0A0C0F';
+          ctx.fillRect(a[0] - s / 2 - dpr, a[1] - s / 2 - dpr, s + 2 * dpr, s + 2 * dpr);
+          ctx.fillStyle = color; ctx.fillRect(a[0] - s / 2, a[1] - s / 2, s, s);
+        },
+        arrow: function (p1, p2, color) {
+          const a = proj(p1), b = proj(p2), dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy);
+          if (len < 3 * dpr) return;
+          const ux = dx / len, uy = dy / len, hl = Math.min(8 * dpr, len * 0.45);
+          ctx.globalAlpha = la; ctx.strokeStyle = color; ctx.lineWidth = 2 * dpr; ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+          ctx.moveTo(b[0] - hl * (ux * 0.87 - uy * 0.5), b[1] - hl * (uy * 0.87 + ux * 0.5)); ctx.lineTo(b[0], b[1]);
+          ctx.lineTo(b[0] - hl * (ux * 0.87 + uy * 0.5), b[1] - hl * (uy * 0.87 - ux * 0.5));
+          ctx.stroke();
+        },
+        text: function (str, p, color) {
+          const a = proj(p);
+          ctx.globalAlpha = la; ctx.fillStyle = color;
+          ctx.fillText(str, a[0], a[1]);
+        }
+      }, t);
+    }
+    ctx.globalAlpha = 1;
   }
 }
-setTimeout(nextLine, 250);
-window.addEventListener("scroll",  completeBoot, { once: true, passive: true });
-window.addEventListener("keydown", completeBoot, { once: true });
-document.getElementById("boot").addEventListener("click", completeBoot, { once: true });
-
-function fireStatusLines() {
-  document.querySelectorAll("[data-sl]").forEach(function(sl, i){
-    setTimeout(function(){ sl.classList.add("live"); }, i * 300);
-  });
-}
-
-// Scroll reveal
-var observer = new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if (e.isIntersecting){ e.target.classList.add("visible"); observer.unobserve(e.target); }
-  });
-}, { threshold: 0.08, rootMargin: "0px 0px -32px 0px" });
-document.querySelectorAll(".reveal").forEach(function(r){ observer.observe(r); });
-
-// Project image viewer
-var imageModal = document.getElementById("image-modal");
-var imageModalImg = document.getElementById("image-modal-img");
-var imageModalClose = imageModal.querySelector(".image-modal-close");
-var lastImageTrigger = null;
-
-function closeImageModal() {
-  imageModal.classList.remove("open");
-  imageModalImg.removeAttribute("src");
-  imageModalImg.alt = "";
-  document.body.style.overflow = "";
-  if (lastImageTrigger) lastImageTrigger.focus();
-}
-
-document.querySelectorAll(".case-image-trigger").forEach(function(trigger){
-  trigger.addEventListener("click", function(){
-    lastImageTrigger = trigger;
-    imageModalImg.src = trigger.getAttribute("data-full");
-    imageModalImg.alt = trigger.querySelector("img").alt;
-    imageModal.setAttribute("aria-label", trigger.getAttribute("data-title"));
-    imageModal.classList.add("open");
-    document.body.style.overflow = "hidden";
-    imageModalClose.focus();
-  });
-});
-
-imageModalClose.addEventListener("click", closeImageModal);
-imageModal.addEventListener("click", function(e){
-  if (e.target === imageModal) closeImageModal();
-});
-window.addEventListener("keydown", function(e){
-  if (e.key === "Escape" && imageModal.classList.contains("open")) closeImageModal();
-});
 </script>
 </body>
 </html>
